@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Page Not Found (404) — Fique</title>
+  <meta name="description" content="The page you were looking for could not be found. Search Fique's free browser-based PDF, image and business tools." />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#6366f1" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  <link rel="stylesheet" href="/assets/css/tool.css" />
+  <link rel="stylesheet" href="/assets/css/responsive.css" />
+  <style>
+    .nf { max-width: 640px; margin: 0 auto; padding: 70px 1.25rem 30px; text-align: center; }
+    .nf .code { font-size: 4.5rem; font-weight: 800; line-height: 1; background: var(--brand-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .nf h1 { font-size: 1.6rem; margin: 10px 0 8px; }
+    .nf p { color: var(--muted); margin-bottom: 24px; }
+    .nf-search { position: relative; max-width: 460px; margin: 0 auto 20px; }
+    .nf-search input { width: 100%; font: inherit; font-size: 1rem; padding: 14px 16px; border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow-sm); outline: none; }
+    .nf-search input:focus { border-color: var(--brand); box-shadow: 0 0 0 4px #e0e7ff; }
+    #search-results { position: absolute; left: 0; right: 0; margin-top: 8px; background: #fff; border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow-md); padding: 6px; text-align: left; z-index: 50; max-height: 55vh; overflow: auto; }
+    .search-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; text-decoration: none; color: var(--text); }
+    .search-item:hover { background: var(--brand-soft); text-decoration: none; }
+    .search-ic { font-size: 1.25rem; }
+    .search-txt b { font-size: .9rem; display: block; }
+    .search-txt small { font-size: .78rem; color: var(--muted); }
+    .search-cat { margin-left: auto; font-size: .68rem; color: var(--brand); background: var(--brand-soft); padding: 2px 8px; border-radius: 999px; }
+    .nf-pop { max-width: 720px; margin: 10px auto 0; }
+  </style>
+</head>
+<body>
+
+<section class="nf">
+  <div class="code">404</div>
+  <h1>Page not found</h1>
+  <p>Sorry, we couldn't find that page. Try searching for a tool, or head back home.</p>
+
+  <div class="nf-search">
+    <label class="visually-hidden" for="tool-search">Search a tool</label>
+    <input type="search" id="tool-search" placeholder="Search a tool… e.g. merge pdf, invoice" autocomplete="off" />
+    <div id="search-results" hidden></div>
+  </div>
+
+  <a class="btn btn-primary" href="/">← Back to homepage</a>
+</section>
+
+<section class="nf-pop">
+  <div class="section-label" style="text-align:center;">Popular tools</div>
+  <div class="grid">
+    <a class="card" href="/chop.html"><div class="ic">🏢</div><h3>Company Chop</h3><p>Digital company chop with your SSM number.</p><span class="go">Open →</span></a>
+    <a class="card" href="/invoice.html"><div class="ic">🧾</div><h3>Invoice / Quotation</h3><p>Branded invoice with SST — export PDF.</p><span class="go">Open →</span></a>
+    <a class="card" href="/pdfmerge.html"><div class="ic">📄</div><h3>Merge PDF</h3><p>Combine several PDFs into one.</p><span class="go">Open →</span></a>
+    <a class="card" href="/qrcode.html"><div class="ic">🔳</div><h3>QR Code Generator</h3><p>QR codes for links, WiFi or contacts.</p><span class="go">Open →</span></a>
+  </div>
+</section>
+
+<script src="/assets/js/search.js" defer></script>
+<script src="/nav.js" defer></script>
+</body>
+</html>

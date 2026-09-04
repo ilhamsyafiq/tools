@@ -1,0 +1,19 @@
+{
+  "name": "Fique — Free Online Tools",
+  "short_name": "Fique",
+  "description": "Free PDF, image, business and Malaysia-friendly tools that run entirely in your browser.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "background_color": "#f5f7fa",
+  "theme_color": "#6366f1",
+  "lang": "en-MY",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

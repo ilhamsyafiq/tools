@@ -1,0 +1,71 @@
+/* ==========================================================================
+   Fique — tool.css
+   Shared tool-page UI: breadcrumb, page header, upload zone, file list,
+   progress, previews, download area, messages. For new tool pages built on
+   the shared template. Existing tools keep their inline styles for now.
+   ========================================================================== */
+
+.tool-page { max-width: 900px; margin: 0 auto; padding: 24px 1.25rem 48px; }
+
+/* Breadcrumb */
+.breadcrumb { font-size: .8rem; color: var(--muted); margin: 6px 0 18px; }
+.breadcrumb a { color: var(--muted); }
+.breadcrumb a:hover { color: var(--brand); }
+.breadcrumb span[aria-current] { color: var(--text); font-weight: 600; }
+
+/* Tool header */
+.tool-head h1 { font-size: 1.9rem; margin-bottom: 8px; }
+.tool-head p.lead { color: var(--muted); font-size: 1rem; max-width: 62ch; }
+
+/* Upload / drag-drop zone */
+.dropzone {
+  border: 2px dashed #cbd5e1;
+  border-radius: var(--radius);
+  background: #fff;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.dropzone:hover, .dropzone.dragover { border-color: var(--brand); background: var(--brand-soft); }
+.dropzone strong { color: var(--text); display: block; font-size: 1.02rem; margin-bottom: 4px; }
+.dropzone input[type=file] { display: none; }
+
+/* File list */
+.filelist { list-style: none; margin: 16px 0; display: flex; flex-direction: column; gap: 8px; }
+.filelist li {
+  display: flex; align-items: center; gap: 10px;
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 10px 12px; font-size: .88rem;
+}
+.filelist .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.filelist .size { color: var(--muted); font-size: .8rem; }
+
+/* Progress */
+.progress { height: 8px; background: #e5e7eb; border-radius: 999px; overflow: hidden; margin: 12px 0; }
+.progress > i { display: block; height: 100%; width: 0; background: var(--brand-gradient); transition: width .2s; }
+
+/* Preview + download */
+.preview { margin: 16px 0; display: grid; gap: 12px; }
+.download-area { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* Messages */
+.msg { padding: 12px 14px; border-radius: var(--radius-sm); font-size: .88rem; margin: 12px 0; }
+.msg-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+.msg-success { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+.msg-info { background: var(--brand-soft); color: var(--brand-dark); border: 1px solid #c7d2fe; }
+
+/* Content blocks (How to use / FAQ / Related) */
+.tool-section { margin-top: 40px; }
+.tool-section h2 { font-size: 1.3rem; margin-bottom: 14px; }
+.tool-section ol, .tool-section ul { padding-left: 1.25rem; }
+.tool-section li { margin: 6px 0; }
+.faq details {
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 12px 16px; margin: 8px 0;
+}
+.faq summary { font-weight: 600; cursor: pointer; }
+.faq details p { color: var(--muted); margin-top: 8px; }
+
+.related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }

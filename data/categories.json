@@ -1,0 +1,32 @@
+[
+  {
+    "name": "PDF Tools",
+    "slug": "pdf",
+    "description": "Free online PDF tools to merge, split, compress, convert, sign and edit documents — all in your browser.",
+    "icon": "📄"
+  },
+  {
+    "name": "Image Tools",
+    "slug": "image",
+    "description": "Free online image tools to convert, compress, resize, crop and remove backgrounds — no upload needed.",
+    "icon": "🖼️"
+  },
+  {
+    "name": "Business Tools",
+    "slug": "business",
+    "description": "Free invoicing, quotation and document tools for small businesses and freelancers.",
+    "icon": "🧾"
+  },
+  {
+    "name": "Malaysia Tools",
+    "slug": "malaysia",
+    "description": "Tools built for Malaysian businesses — company chop, SST-ready invoices and more.",
+    "icon": "🇲🇾"
+  },
+  {
+    "name": "Utilities",
+    "slug": "utilities",
+    "description": "Handy everyday utilities — QR codes, passwords, text and word tools.",
+    "icon": "🧰"
+  }
+]

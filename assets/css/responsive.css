@@ -1,0 +1,27 @@
+/* ==========================================================================
+   Fique — responsive.css
+   Mobile and small-screen adjustments for the shared layout.
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+  .card { padding: 18px; }
+  .tool-head h1 { font-size: 1.55rem; }
+}
+
+@media (max-width: 600px) {
+  .grid { grid-template-columns: 1fr 1fr; }
+  .card .ic { width: 38px; height: 38px; font-size: 1.1rem; }
+  .card h3 { font-size: 0.95rem; }
+  .btn { width: 100%; }        /* full-width, easy tap targets on phones */
+  .download-area .btn { width: auto; }
+}
+
+@media (max-width: 380px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}

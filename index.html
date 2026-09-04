@@ -2,196 +2,161 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>fique.my — Free Online PDF &amp; Image Tools</title>
-  <meta name="description" content="Free, private, in-browser tools: create a company chop, sign PDFs, merge/split PDFs, convert PDF↔image, remove backgrounds and convert images. Nothing is uploaded." />
+  <title>Fique — Free Online Tools for Work &amp; Everyday Life</title>
+  <meta name="description" content="Free PDF, image, business and Malaysia-friendly tools. Fast, simple and privacy-focused — everything runs directly in your browser. No sign-up, no watermark." />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link rel="icon" href="favicon.ico" />
+  <meta name="theme-color" content="#6366f1" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="canonical" href="https://fique.my/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Fique" />
+  <meta property="og:title" content="Fique — Free Online Tools for Work &amp; Everyday Life" />
+  <meta property="og:description" content="Free PDF, image, business and Malaysia-friendly tools that run directly in your browser. No sign-up, no watermark." />
+  <meta property="og:url" content="https://fique.my/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Fique — Free Online Tools" />
+  <meta name="twitter:description" content="Free PDF, image, business and Malaysia-friendly tools that run directly in your browser." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/tool.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Fique",
+    "url": "https://fique.my/",
+    "description": "Free PDF, image, business and Malaysia-friendly tools that run directly in your browser.",
+    "inLanguage": "en-MY",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://fique.my/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
   <style>
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
-:root { --bg:#f5f7fa; --card-bg:#fff; --text:#1f2d3d; --muted:#6b7280; --border:#e8eaee; --brand:#6366f1; --brand-gradient:linear-gradient(90deg,#6366f1 0%,#a78bfa 100%); }
-* { box-sizing:border-box; margin:0; padding:0; }
-body { font-family:"Inter",system-ui,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
-
-.hero { max-width:900px; margin:0 auto; padding:56px 1.25rem 24px; text-align:center; }
-.hero .eyebrow { display:inline-block; background:#eef2ff; color:var(--brand); font-size:0.72rem; font-weight:700; letter-spacing:.5px; text-transform:uppercase; padding:5px 12px; border-radius:999px; margin-bottom:18px; }
-.hero h1 { font-size:2.5rem; font-weight:800; line-height:1.1; margin-bottom:16px; }
-.hero h1 .grad { background:var(--brand-gradient); -webkit-background-clip:text; background-clip:text; color:transparent; }
-.hero p { font-size:1.02rem; color:var(--muted); max-width:620px; margin:0 auto; line-height:1.6; }
-@media (max-width:600px){ .hero h1 { font-size:1.9rem; } .hero { padding-top:36px; } }
-
-.tools { max-width:1080px; margin:0 auto; padding:20px 1.25rem 40px; }
-.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:18px; }
-.tool { display:flex; flex-direction:column; gap:10px; background:var(--card-bg); border:1px solid var(--border); border-radius:14px; padding:22px; text-decoration:none; color:inherit; box-shadow:0 2px 8px rgba(0,0,0,0.05); transition:transform .18s, box-shadow .18s, border-color .18s; }
-.tool:hover { transform:translateY(-3px); box-shadow:0 14px 30px rgba(31,45,61,0.10); border-color:#c7d2fe; }
-.tool .ic { width:44px; height:44px; border-radius:11px; background:linear-gradient(135deg,#eef2ff,#e0e7ff); display:flex; align-items:center; justify-content:center; color:var(--brand); flex-shrink:0; }
-.tool h3 { font-size:1.02rem; font-weight:700; display:flex; align-items:center; gap:8px; }
-.tool p { font-size:0.84rem; color:var(--muted); line-height:1.5; }
-.tool .go { margin-top:auto; font-size:0.8rem; font-weight:600; color:var(--brand); }
-.section-label { font-size:0.72rem; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--muted); margin:26px 0 12px; }
-.pills { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:22px; }
-.pill { font-size:0.76rem; color:#475569; background:#fff; border:1px solid var(--border); border-radius:999px; padding:6px 12px; }
+    .hero { max-width: 820px; margin: 0 auto; padding: 56px 1.25rem 20px; text-align: center; }
+    .hero .eyebrow { display:inline-block; background:var(--brand-soft); color:var(--brand); font-size:.72rem; font-weight:700; letter-spacing:.5px; text-transform:uppercase; padding:5px 12px; border-radius:999px; margin-bottom:18px; }
+    .hero h1 { font-size:2.6rem; font-weight:800; line-height:1.1; margin-bottom:16px; }
+    .hero h1 .grad { background:var(--brand-gradient); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .hero p.sub { font-size:1.05rem; color:var(--muted); max-width:600px; margin:0 auto 26px; }
+    .hero-search { position:relative; max-width:520px; margin:0 auto; }
+    .hero-search input { width:100%; font:inherit; font-size:1rem; padding:15px 18px; border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow-sm); outline:none; transition:border-color .2s, box-shadow .2s; }
+    .hero-search input:focus { border-color:var(--brand); box-shadow:0 0 0 4px #e0e7ff; }
+    #search-results { position:absolute; left:0; right:0; margin-top:8px; background:#fff; border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow-md); padding:6px; text-align:left; z-index:50; max-height:60vh; overflow:auto; }
+    .search-item { display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:10px; text-decoration:none; color:var(--text); }
+    .search-item:hover { background:var(--brand-soft); text-decoration:none; }
+    .search-ic { font-size:1.25rem; }
+    .search-txt b { font-size:.9rem; display:block; }
+    .search-txt small { font-size:.78rem; color:var(--muted); }
+    .search-cat { margin-left:auto; font-size:.68rem; color:var(--brand); background:var(--brand-soft); padding:2px 8px; border-radius:999px; }
+    .pills { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:20px; }
+    .pill { font-size:.76rem; color:#475569; background:#fff; border:1px solid var(--border); border-radius:999px; padding:6px 12px; }
+    .home-main { max-width:var(--maxw); margin:0 auto; padding:14px 1.25rem 40px; }
+    .my-band { background:linear-gradient(135deg,#eef2ff,#f5f3ff); border:1px solid #e0e7ff; border-radius:var(--radius); padding:26px; margin-top:36px; }
+    .my-band h2 { font-size:1.4rem; margin-bottom:8px; }
+    .my-band p { color:var(--muted); max-width:70ch; }
+    .my-band .chips { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+    .my-band .chips a { font-size:.8rem; background:#fff; border:1px solid var(--border); border-radius:999px; padding:7px 13px; color:var(--text); text-decoration:none; }
+    .my-band .chips a:hover { border-color:var(--brand); color:var(--brand); }
+    .privacy { margin-top:36px; background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:26px; }
+    .privacy h2 { font-size:1.4rem; margin-bottom:8px; }
+    .privacy p { color:var(--muted); max-width:75ch; }
+    @media (max-width:600px){ .hero h1 { font-size:2rem; } .hero { padding-top:36px; } }
   </style>
 </head>
 <body>
 
 <section class="hero">
   <span class="eyebrow">100% free · private · in your browser</span>
-  <h1>Free <span class="grad">PDF &amp; Image</span> tools for Malaysia</h1>
-  <p>Create a company chop, sign and organise PDFs, and edit images — all instantly in your browser. No sign-up, no payment, and your files never leave your device.</p>
+  <h1>Free tools for <span class="grad">work &amp; everyday life</span></h1>
+  <p class="sub">PDF, image, business and Malaysia-specific tools that run directly in your browser. No sign-up, no watermark.</p>
+  <div class="hero-search">
+    <label class="visually-hidden" for="tool-search">Search a tool</label>
+    <input type="search" id="tool-search" placeholder="Search a tool… e.g. merge pdf, invoice, qr" autocomplete="off" />
+    <div id="search-results" hidden></div>
+  </div>
   <div class="pills">
     <span class="pill">No upload</span>
     <span class="pill">No watermark</span>
     <span class="pill">No login</span>
-    <span class="pill">Works offline*</span>
+    <span class="pill">Free forever</span>
   </div>
 </section>
 
-<main class="tools">
-  <div class="section-label">Stamps</div>
+<main class="home-main">
+
+  <div class="section-label">⭐ Popular tools</div>
   <div class="grid">
-    <a class="tool" href="chop.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="12" r="4"/></svg></div>
-      <h3>Create Chop</h3>
-      <p>Generate a digital company chop (round, box or info stamp) with your SSM number and address.</p>
-      <span class="go">Open →</span>
-    </a>
+    <a class="card" href="chop.html"><div class="ic">🏢</div><h3>Company Chop</h3><p>Generate a digital company chop with your SSM number and address.</p><span class="go">Open →</span></a>
+    <a class="card" href="invoice.html"><div class="ic">🧾</div><h3>Invoice / Quotation</h3><p>Branded invoice, quotation or receipt with SST and your chop — export PDF.</p><span class="go">Open →</span></a>
+    <a class="card" href="pdfmerge.html"><div class="ic">📄</div><h3>Merge PDF</h3><p>Combine several PDFs into one, reorder and remove pages.</p><span class="go">Open →</span></a>
+    <a class="card" href="pdfsign.html"><div class="ic">✍️</div><h3>Sign PDF + Chop</h3><p>Drop your signature and company chop anywhere on a PDF.</p><span class="go">Open →</span></a>
+    <a class="card" href="bgremover.html"><div class="ic">🪄</div><h3>Background Remover</h3><p>Make white backgrounds transparent — great for chops &amp; signatures.</p><span class="go">Open →</span></a>
+    <a class="card" href="qrcode.html"><div class="ic">🔳</div><h3>QR Code Generator</h3><p>QR codes for links, WiFi or contacts — download PNG or SVG.</p><span class="go">Open →</span></a>
+    <a class="card" href="imgresize.html"><div class="ic">📐</div><h3>Resize &amp; Passport Photo</h3><p>Resize, crop and make passport photos (MY/US presets).</p><span class="go">Open →</span></a>
+    <a class="card" href="pdfcompress.html"><div class="ic">🗜️</div><h3>Compress PDF</h3><p>Shrink PDF file size — great for scanned documents.</p><span class="go">Open →</span></a>
   </div>
 
-  <div class="section-label">PDF tools</div>
+  <div class="section-label">📄 PDF tools</div>
   <div class="grid">
-    <a class="tool" href="pdfsign.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></div>
-      <h3>PDF Sign + Chop</h3>
-      <p>Upload a PDF and drop your signature and company chop anywhere, then download.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="pdfeditor.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
-      <h3>PDF Editor</h3>
-      <p>Add text, freehand drawing, highlights, images and shapes onto any PDF page.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="pdfmerge.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-      <h3>PDF Merge</h3>
-      <p>Combine several PDFs into one, reorder and remove pages, then compile.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="pdfsplit.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="12" y1="2" x2="12" y2="22"/></svg></div>
-      <h3>PDF Split</h3>
-      <p>Extract page ranges into one PDF, or split every page into separate files as a zip.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="pdf2img.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>
-      <h3>PDF → Image</h3>
-      <p>Convert each PDF page to a PNG or JPG at your chosen resolution.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="img2pdf.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="m4 15 4-4 4 4 4-5 4 5"/></svg></div>
-      <h3>Image → PDF</h3>
-      <p>Combine images into a single PDF — fit-to-image or A4, in any order.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="pdforganize.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M17 14v7m-3.5-3.5h7"/></svg></div>
-      <h3>PDF Organize</h3>
-      <p>Rotate, reorder by drag, and delete pages, then download the new PDF.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="pdfcompress.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 9V5a1 1 0 0 1 1-1h4M20 9V5a1 1 0 0 0-1-1h-4M4 15v4a1 1 0 0 0 1 1h4M20 15v4a1 1 0 0 1-1 1h-4"/></svg></div>
-      <h3>PDF Compress</h3>
-      <p>Shrink PDF file size — great for scanned or image-heavy documents.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="pdfwatermark.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg></div>
-      <h3>PDF Watermark</h3>
-      <p>Stamp "CONFIDENTIAL/DRAFT" text and add page numbers across all pages.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="pdf2text.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M8 13h8M8 17h8M8 9h2"/></svg></div>
-      <h3>PDF → Text</h3>
-      <p>Extract all selectable text from a PDF and copy or download it.</p>
-      <span class="go">Open →</span>
-    </a>
+    <a class="card" href="pdfmerge.html"><div class="ic">📄</div><h3>Merge PDF</h3><p>Combine several PDFs into one, reorder and remove pages.</p><span class="go">Open →</span></a>
+    <a class="card" href="pdfsplit.html"><div class="ic">✂️</div><h3>Split PDF</h3><p>Extract page ranges or split every page into separate files.</p><span class="go">Open →</span></a>
+    <a class="card" href="pdforganize.html"><div class="ic">🗂️</div><h3>Organize PDF</h3><p>Rotate, reorder by drag and delete pages, then download.</p><span class="go">Open →</span></a>
+    <a class="card" href="pdfcompress.html"><div class="ic">🗜️</div><h3>Compress PDF</h3><p>Shrink PDF file size — great for image-heavy documents.</p><span class="go">Open →</span></a>
+    <a class="card" href="pdfsign.html"><div class="ic">✍️</div><h3>Sign PDF + Chop</h3><p>Add your signature and company chop anywhere, then download.</p><span class="go">Open →</span></a>
+    <a class="card" href="pdfeditor.html"><div class="ic">📝</div><h3>PDF Editor</h3><p>Add text, drawing, highlights, images and shapes onto any page.</p><span class="go">Open →</span></a>
+    <a class="card" href="pdfwatermark.html"><div class="ic">💧</div><h3>Watermark PDF</h3><p>Stamp CONFIDENTIAL/DRAFT text and add page numbers.</p><span class="go">Open →</span></a>
+    <a class="card" href="pdf2img.html"><div class="ic">🖼️</div><h3>PDF → Image</h3><p>Convert each PDF page to a PNG or JPG at your chosen resolution.</p><span class="go">Open →</span></a>
+    <a class="card" href="img2pdf.html"><div class="ic">📎</div><h3>Image → PDF</h3><p>Combine images into a single PDF — fit-to-image or A4.</p><span class="go">Open →</span></a>
+    <a class="card" href="pdf2text.html"><div class="ic">📃</div><h3>PDF → Text</h3><p>Extract all selectable text from a PDF and copy or download.</p><span class="go">Open →</span></a>
   </div>
 
-  <div class="section-label">Image tools</div>
+  <div class="section-label">🖼️ Image tools</div>
   <div class="grid">
-    <a class="tool" href="bgremover.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 3l18 18"/><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/></svg></div>
-      <h3>Background Remover</h3>
-      <p>Make white backgrounds transparent with a clean edge — perfect for chops and signatures.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="imgconvert.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="m8 12 3 3 5-6"/></svg></div>
-      <h3>Image Converter</h3>
-      <p>Convert between PNG, JPG and WebP, adjust quality and resize.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="imgcompress.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m18 0V5a2 2 0 0 0-2-2h-4M3 15v4a2 2 0 0 0 2 2h4m6 0h4a2 2 0 0 0 2-2v-4"/></svg></div>
-      <h3>Image Compress</h3>
-      <p>Reduce image file size with a quality slider — batch and zip.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="imgresize.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 8h8v8"/></svg></div>
-      <h3>Resize &amp; Crop</h3>
-      <p>Resize, crop and make passport photos (MY/US presets) in your browser.</p>
-      <span class="go">Open →</span>
-    </a>
+    <a class="card" href="bgremover.html"><div class="ic">🪄</div><h3>Background Remover</h3><p>Make white backgrounds transparent with a clean edge.</p><span class="go">Open →</span></a>
+    <a class="card" href="imgconvert.html"><div class="ic">🔄</div><h3>Image Converter</h3><p>Convert between PNG, JPG and WebP, adjust quality and resize.</p><span class="go">Open →</span></a>
+    <a class="card" href="imgcompress.html"><div class="ic">🗜️</div><h3>Image Compressor</h3><p>Reduce image file size with a quality slider — batch and zip.</p><span class="go">Open →</span></a>
+    <a class="card" href="imgresize.html"><div class="ic">📐</div><h3>Resize &amp; Crop</h3><p>Resize, crop and make passport photos (MY/US presets).</p><span class="go">Open →</span></a>
   </div>
 
-  <div class="section-label">Business &amp; utilities</div>
+  <div class="section-label">🧾 Business &amp; utilities</div>
   <div class="grid">
-    <a class="tool" href="invoice.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div>
-      <h3>Invoice / Quotation</h3>
-      <p>Generate a branded invoice, quotation or receipt with SST and your chop — export PDF.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="qrcode.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14v7M14 20h3"/></svg></div>
-      <h3>QR Code Generator</h3>
-      <p>Make QR codes for links, WiFi or contacts — download as PNG or SVG.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="wordcounter.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg></div>
-      <h3>Word Counter</h3>
-      <p>Live counts of words, characters, sentences, lines and reading time.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="caseconverter.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 4v16M6 4h6a4 4 0 0 1 0 8H6m0 0h7a4 4 0 0 1 0 8H6"/></svg></div>
-      <h3>Case Converter</h3>
-      <p>UPPERCASE, lowercase, Title, camelCase, snake_case, kebab-case.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="passwordgen.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-      <h3>Password Generator</h3>
-      <p>Strong random passwords with length and character options.</p>
-      <span class="go">Open →</span>
-    </a>
-    <a class="tool" href="loremipsum.html">
-      <div class="ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10M4 18h14"/></svg></div>
-      <h3>Lorem Ipsum</h3>
-      <p>Generate placeholder paragraphs for mockups and designs.</p>
-      <span class="go">Open →</span>
-    </a>
+    <a class="card" href="invoice.html"><div class="ic">🧾</div><h3>Invoice / Quotation</h3><p>Branded invoice, quotation or receipt with SST and your chop.</p><span class="go">Open →</span></a>
+    <a class="card" href="qrcode.html"><div class="ic">🔳</div><h3>QR Code Generator</h3><p>QR codes for links, WiFi or contacts — PNG or SVG.</p><span class="go">Open →</span></a>
+    <a class="card" href="wordcounter.html"><div class="ic">🔢</div><h3>Word Counter</h3><p>Live counts of words, characters, sentences and reading time.</p><span class="go">Open →</span></a>
+    <a class="card" href="caseconverter.html"><div class="ic">🔠</div><h3>Case Converter</h3><p>UPPERCASE, lowercase, Title, camelCase, snake_case, kebab-case.</p><span class="go">Open →</span></a>
+    <a class="card" href="passwordgen.html"><div class="ic">🔐</div><h3>Password Generator</h3><p>Strong random passwords with length and character options.</p><span class="go">Open →</span></a>
+    <a class="card" href="loremipsum.html"><div class="ic">📃</div><h3>Lorem Ipsum</h3><p>Placeholder paragraphs for mockups and designs.</p><span class="go">Open →</span></a>
   </div>
 
-  <p style="font-size:0.72rem;color:var(--muted);margin-top:24px;text-align:center;">*Tools use free open-source libraries loaded from a CDN, so a connection is needed on first load.</p>
+  <section class="my-band">
+    <h2>🇲🇾 Built for Malaysia</h2>
+    <p>Fique includes tools that Malaysian businesses and freelancers actually use every day — create a company chop with your SSM number, generate SST-ready invoices and quotations, and make passport-size photos to local presets. More Malaysia-specific tools are on the way.</p>
+    <div class="chips">
+      <a href="chop.html">Company Chop</a>
+      <a href="invoice.html">Invoice &amp; Quotation</a>
+      <a href="imgresize.html">Passport Photo</a>
+      <a href="pdfsign.html">Sign PDF + Chop</a>
+    </div>
+  </section>
+
+  <section class="privacy">
+    <h2>🔒 Your files stay on your device</h2>
+    <p>Every tool on Fique runs entirely in your browser using open-source libraries. Your PDFs, images and text are processed locally on your device and are never uploaded to a server. The tool libraries are loaded from a CDN, so an internet connection is only needed on first load.</p>
+  </section>
+
 </main>
 
+<script src="assets/js/search.js" defer></script>
 <script src="nav.js" defer></script>
 </body>
 </html>

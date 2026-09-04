@@ -1,0 +1,5 @@
+# fique.my — allow all well-behaved crawlers
+User-agent: *
+Allow: /
+
+Sitemap: https://fique.my/sitemap.xml
