@@ -122,8 +122,34 @@ label.file-label input { display:none; }
   }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://fique.my/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Image"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Background Remover",
+      "item": "https://fique.my/bgremover.html"
+    }
+  ]
+}
+</script>
 </head>
 <body>
+<nav class="site-breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span>Image</span><span class="sep">/</span><span class="cur" aria-current="page">Background Remover</span></nav>
 
 <!-- HEADER -->
 <h1 class="page-title">Background Remover <span class="badge">Free</span></h1>
@@ -316,6 +342,15 @@ label.file-label input { display:none; }
   });
 })();
 </script>
+<section class="site-related" aria-label="Related tools">
+  <h2>Related tools</h2>
+  <div class="site-related-grid">
+  <a class="site-rc" href="imgconvert.html"><span class="em">🔄</span><b>Image Converter</b><small>Convert between PNG, JPG and WebP, adjust quality and resize.</small></a>
+  <a class="site-rc" href="imgresize.html"><span class="em">📐</span><b>Resize &amp; Crop Image</b><small>Resize, crop and make passport photos (MY/US presets) in your browser.</small></a>
+  <a class="site-rc" href="chop.html"><span class="em">🏢</span><b>Company Chop Maker</b><small>Create a digital company chop — round, box or info stamp — with your SSM number and address.</small></a>
+  <a class="site-rc" href="pdfsign.html"><span class="em">✍️</span><b>Sign PDF + Chop</b><small>Add your signature and company chop anywhere on a PDF, then download it.</small></a>
+  </div>
+</section>
   <script src="nav.js" defer></script>
 </body>
 </html>

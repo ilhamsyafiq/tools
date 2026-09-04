@@ -61,8 +61,34 @@ input[type=number]:focus { outline:none; border-color:var(--brand); box-shadow:0
   }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://fique.my/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Utilities"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Lorem Ipsum Generator",
+      "item": "https://fique.my/loremipsum.html"
+    }
+  ]
+}
+</script>
 </head>
 <body>
+<nav class="site-breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span>Utilities</span><span class="sep">/</span><span class="cur" aria-current="page">Lorem Ipsum Generator</span></nav>
 <h1 class="page-title">Lorem Ipsum Generator <span class="badge">Free</span></h1>
 <p class="page-subtitle">Placeholder text for mockups and designs. 100% in your browser.</p>
 
@@ -137,6 +163,15 @@ input[type=number]:focus { outline:none; border-color:var(--brand); box-shadow:0
   generateLorem();
 })();
 </script>
+<section class="site-related" aria-label="Related tools">
+  <h2>Related tools</h2>
+  <div class="site-related-grid">
+  <a class="site-rc" href="wordcounter.html"><span class="em">🔢</span><b>Word Counter</b><small>Live counts of words, characters, sentences, lines and reading time.</small></a>
+  <a class="site-rc" href="caseconverter.html"><span class="em">🔠</span><b>Case Converter</b><small>Convert text to UPPERCASE, lowercase, Title, camelCase, snake_case and kebab-case.</small></a>
+  <a class="site-rc" href="passwordgen.html"><span class="em">🔐</span><b>Password Generator</b><small>Strong random passwords with length and character options.</small></a>
+  <a class="site-rc" href="qrcode.html"><span class="em">🔳</span><b>QR Code Generator</b><small>Make QR codes for links, WiFi or contacts — download as PNG or SVG.</small></a>
+  </div>
+</section>
 <script src="nav.js" defer></script>
 </body>
 </html>

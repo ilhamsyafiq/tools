@@ -149,8 +149,34 @@ table.a4-items tbody td .desc-main { color:#111827; }
   }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://fique.my/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Business"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Invoice Generator",
+      "item": "https://fique.my/invoice.html"
+    }
+  ]
+}
+</script>
 </head>
 <body>
+<nav class="site-breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span>Business</span><span class="sep">/</span><span class="cur" aria-current="page">Invoice Generator</span></nav>
 <h1 class="page-title">Invoice Generator <span class="badge">Free</span></h1>
 <p class="page-subtitle">Create an Invoice, Quotation or Receipt and export a crisp PDF. Malaysian-friendly (RM &amp; SST). 100% in your browser — nothing is uploaded.</p>
 
@@ -535,6 +561,15 @@ Thank you for your business!</textarea></div>
   })();
 })();
 </script>
+<section class="site-related" aria-label="Related tools">
+  <h2>Related tools</h2>
+  <div class="site-related-grid">
+  <a class="site-rc" href="chop.html"><span class="em">🏢</span><b>Company Chop Maker</b><small>Create a digital company chop — round, box or info stamp — with your SSM number and address.</small></a>
+  <a class="site-rc" href="pdfsign.html"><span class="em">✍️</span><b>Sign PDF + Chop</b><small>Add your signature and company chop anywhere on a PDF, then download it.</small></a>
+  <a class="site-rc" href="qrcode.html"><span class="em">🔳</span><b>QR Code Generator</b><small>Make QR codes for links, WiFi or contacts — download as PNG or SVG.</small></a>
+  <a class="site-rc" href="pdfeditor.html"><span class="em">📝</span><b>PDF Editor</b><small>Add text, freehand drawing, highlights, images and shapes onto any PDF page.</small></a>
+  </div>
+</section>
 <script src="nav.js" defer></script>
 </body>
 </html>

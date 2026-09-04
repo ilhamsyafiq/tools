@@ -81,8 +81,34 @@ input[type=color] { width:42px; height:34px; border:1px solid var(--border); bor
   }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://fique.my/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Utilities"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "QR Code Generator",
+      "item": "https://fique.my/qrcode.html"
+    }
+  ]
+}
+</script>
 </head>
 <body>
+<nav class="site-breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span>Utilities</span><span class="sep">/</span><span class="cur" aria-current="page">QR Code Generator</span></nav>
 <h1 class="page-title">QR Code Generator <span class="badge">Free</span></h1>
 <p class="page-subtitle">Create QR codes for text, links, WiFi and contacts. 100% in your browser, nothing is uploaded.</p>
 
@@ -330,6 +356,15 @@ input[type=color] { width:42px; height:34px; border:1px solid var(--border); bor
   render();
 })();
 </script>
+<section class="site-related" aria-label="Related tools">
+  <h2>Related tools</h2>
+  <div class="site-related-grid">
+  <a class="site-rc" href="invoice.html"><span class="em">🧾</span><b>Invoice Generator</b><small>Generate a branded invoice, quotation or receipt with SST and your chop — export PDF.</small></a>
+  <a class="site-rc" href="passwordgen.html"><span class="em">🔐</span><b>Password Generator</b><small>Strong random passwords with length and character options.</small></a>
+  <a class="site-rc" href="caseconverter.html"><span class="em">🔠</span><b>Case Converter</b><small>Convert text to UPPERCASE, lowercase, Title, camelCase, snake_case and kebab-case.</small></a>
+  <a class="site-rc" href="wordcounter.html"><span class="em">🔢</span><b>Word Counter</b><small>Live counts of words, characters, sentences, lines and reading time.</small></a>
+  </div>
+</section>
   <script src="nav.js" defer></script>
 </body>
 </html>

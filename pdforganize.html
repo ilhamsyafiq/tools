@@ -86,8 +86,34 @@ body { font-family:"Inter",system-ui,sans-serif; background:var(--bg); color:var
   }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://fique.my/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PDF"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Organize PDF",
+      "item": "https://fique.my/pdforganize.html"
+    }
+  ]
+}
+</script>
 </head>
 <body>
+<nav class="site-breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span>PDF</span><span class="sep">/</span><span class="cur" aria-current="page">Organize PDF</span></nav>
 
 <h1 class="page-title">PDF Organize <span class="badge">Free</span></h1>
 <p class="page-subtitle">Rotate, reorder and delete PDF pages, then download the result. 100% in your browser, nothing is uploaded.</p>
@@ -313,6 +339,15 @@ body { font-family:"Inter",system-ui,sans-serif; background:var(--bg); color:var
   dropzone.addEventListener('drop', function(e){ if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
 })();
 </script>
+<section class="site-related" aria-label="Related tools">
+  <h2>Related tools</h2>
+  <div class="site-related-grid">
+  <a class="site-rc" href="pdfmerge.html"><span class="em">📄</span><b>Merge PDF</b><small>Combine several PDFs into one, reorder and remove pages, then compile.</small></a>
+  <a class="site-rc" href="pdfsplit.html"><span class="em">✂️</span><b>Split PDF</b><small>Extract page ranges into one PDF, or split every page into separate files as a zip.</small></a>
+  <a class="site-rc" href="pdfeditor.html"><span class="em">📝</span><b>PDF Editor</b><small>Add text, freehand drawing, highlights, images and shapes onto any PDF page.</small></a>
+  <a class="site-rc" href="pdfcompress.html"><span class="em">🗜️</span><b>Compress PDF</b><small>Shrink PDF file size — great for scanned or image-heavy documents.</small></a>
+  </div>
+</section>
   <script src="nav.js" defer></script>
 </body>
 </html>

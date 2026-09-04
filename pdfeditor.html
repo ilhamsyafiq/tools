@@ -226,8 +226,34 @@ label.file-label input { display: none; }
   }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://fique.my/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PDF"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "PDF Editor",
+      "item": "https://fique.my/pdfeditor.html"
+    }
+  ]
+}
+</script>
 </head>
 <body>
+<nav class="site-breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span>PDF</span><span class="sep">/</span><span class="cur" aria-current="page">PDF Editor</span></nav>
 
 <h1 class="page-title">PDF Editor <span class="badge">Free</span></h1>
 <p class="page-subtitle">Add text, draw, highlight, place images and shapes on any PDF, then download — 100% in your browser, nothing is uploaded.</p>
@@ -950,6 +976,15 @@ function rasterizeToPng(imgEl){
 }
 </script>
 
+<section class="site-related" aria-label="Related tools">
+  <h2>Related tools</h2>
+  <div class="site-related-grid">
+  <a class="site-rc" href="pdfsign.html"><span class="em">✍️</span><b>Sign PDF + Chop</b><small>Add your signature and company chop anywhere on a PDF, then download it.</small></a>
+  <a class="site-rc" href="pdfmerge.html"><span class="em">📄</span><b>Merge PDF</b><small>Combine several PDFs into one, reorder and remove pages, then compile.</small></a>
+  <a class="site-rc" href="pdfwatermark.html"><span class="em">💧</span><b>Watermark PDF</b><small>Stamp CONFIDENTIAL/DRAFT text and add page numbers across all pages.</small></a>
+  <a class="site-rc" href="pdforganize.html"><span class="em">🗂️</span><b>Organize PDF</b><small>Rotate, reorder by drag, and delete pages, then download the new PDF.</small></a>
+  </div>
+</section>
   <script src="nav.js" defer></script>
 </body>
 </html>

@@ -370,8 +370,34 @@ label.file-label input { display: none; }
   }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://fique.my/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PDF"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Sign PDF + Chop",
+      "item": "https://fique.my/pdfsign.html"
+    }
+  ]
+}
+</script>
 </head>
 <body>
+<nav class="site-breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span>PDF</span><span class="sep">/</span><span class="cur" aria-current="page">Sign PDF + Chop</span></nav>
 
 <!-- HEADER -->
 <h1 class="page-title">Signature + Chop on PDF</h1>
@@ -1082,6 +1108,16 @@ async function downloadPDF() {
   setTimeout(() => URL.revokeObjectURL(a.href), 10000);
 }
 </script>
+
+<section class="site-related" aria-label="Related tools">
+  <h2>Related tools</h2>
+  <div class="site-related-grid">
+  <a class="site-rc" href="pdfeditor.html"><span class="em">📝</span><b>PDF Editor</b><small>Add text, freehand drawing, highlights, images and shapes onto any PDF page.</small></a>
+  <a class="site-rc" href="chop.html"><span class="em">🏢</span><b>Company Chop Maker</b><small>Create a digital company chop — round, box or info stamp — with your SSM number and address.</small></a>
+  <a class="site-rc" href="pdfmerge.html"><span class="em">📄</span><b>Merge PDF</b><small>Combine several PDFs into one, reorder and remove pages, then compile.</small></a>
+  <a class="site-rc" href="pdfwatermark.html"><span class="em">💧</span><b>Watermark PDF</b><small>Stamp CONFIDENTIAL/DRAFT text and add page numbers across all pages.</small></a>
+  </div>
+</section>
 
   <script src="nav.js" defer></script>
 </body>

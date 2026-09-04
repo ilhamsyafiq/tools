@@ -156,64 +156,9 @@
     return _toolsPromise;
   }
 
-  function slug(p) { return String(p || '').replace(/^\//, '').toLowerCase(); }
-
-  // Inject breadcrumb (Home > Category > Tool) + a "Related tools" grid, plus
-  // BreadcrumbList structured data — only on real tool pages found in the
-  // registry. index.html / 404 / unknown pages are skipped.
-  function buildChrome(tools) {
-    var byPath = {};
-    tools.forEach(function (t) { byPath[slug(t.path)] = t; });
-    var current = byPath[path];
-    if (!current) return;
-
-    var headerEl = document.querySelector('.site-header');
-    var footerEl = document.querySelector('.site-footer');
-
-    // --- Breadcrumb ---
-    var crumbHtml = '<nav class="site-breadcrumb" aria-label="Breadcrumb">'
-      + '<a href="index.html">Home</a>'
-      + '<span class="sep">/</span>'
-      + '<span>' + esc(current.category || 'Tools') + '</span>'
-      + '<span class="sep">/</span>'
-      + '<span class="cur" aria-current="page">' + esc(current.name) + '</span>'
-      + '</nav>';
-    if (headerEl) headerEl.insertAdjacentHTML('afterend', crumbHtml);
-
-    // --- Related tools ---
-    var related = (current.related || [])
-      .map(function (p) { return byPath[slug(p)]; })
-      .filter(function (t) { return t && slug(t.path) !== path; })
-      .slice(0, 4);
-    if (related.length && footerEl) {
-      var cards = related.map(function (t) {
-        return '<a class="site-rc" href="' + esc(slug(t.path)) + '">'
-          + '<span class="em">' + esc(t.icon || '🔧') + '</span>'
-          + '<b>' + esc(t.name) + '</b>'
-          + '<small>' + esc(t.description || '') + '</small></a>';
-      }).join('');
-      var relHtml = '<section class="site-related" aria-label="Related tools">'
-        + '<h2>Related tools</h2>'
-        + '<div class="site-related-grid">' + cards + '</div></section>';
-      footerEl.insertAdjacentHTML('beforebegin', relHtml);
-    }
-
-    // --- BreadcrumbList JSON-LD ---
-    var origin = 'https://fique.my/';
-    var items = [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: origin },
-      { '@type': 'ListItem', position: 2, name: current.category || 'Tools' },
-      { '@type': 'ListItem', position: 3, name: current.name, item: origin + slug(current.path) }
-    ];
-    var ld = document.createElement('script');
-    ld.type = 'application/ld+json';
-    ld.textContent = JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: items
-    });
-    document.head.appendChild(ld);
-  }
+  // Breadcrumb + related tools are baked into each tool page as static HTML
+  // (see data/tools.json for the source of truth). nav.js only styles them
+  // (.site-breadcrumb / .site-related, above) and no longer injects them.
 
   function mount() {
     var style = document.createElement('style');
@@ -251,9 +196,6 @@
     });
 
     setupSearch();
-
-    // Breadcrumb + related tools (tool pages only), from the shared registry.
-    loadTools().then(buildChrome);
   }
 
   // Site-wide search powered by data/tools.json.
