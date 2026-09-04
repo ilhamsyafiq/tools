@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>PDF Compress – fique.my</title>
+  <meta name="description" content="Free in-browser PDF compressor. Shrink PDF file size — nothing leaves your browser." />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="favicon.ico" />
+  <style>
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+:root { --bg:#f5f7fa; --card-bg:#fff; --radius:12px; --shadow:0 2px 8px rgba(0,0,0,0.06); --text:#1f2d3d; --muted:#6b7280; --border:#e8eaee; --brand:#6366f1; --brand-gradient:linear-gradient(90deg,#6366f1 0%,#a78bfa 100%); }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:"Inter",system-ui,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+.page-title { text-align:center; font-size:1.5rem; font-weight:700; margin:24px 0 8px; }
+.page-subtitle { text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:20px; padding:0 1rem; }
+.wrap { max-width:760px; margin:auto; padding:0 1.25rem 2rem; }
+.card { background:var(--card-bg); padding:1.25rem; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:1.25rem; }
+.badge { display:inline-block; background:#eef2ff; color:var(--brand); font-size:0.7rem; font-weight:600; padding:3px 8px; border-radius:999px; }
+.dropzone { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:200px; border:2px dashed var(--border); border-radius:12px; color:var(--muted); font-size:0.9rem; cursor:pointer; transition:border-color .2s,background .2s; text-align:center; padding:1rem; }
+.dropzone:hover, .dropzone.drag { border-color:var(--brand); background:#eef2ff; }
+.dropzone svg { margin-bottom:12px; opacity:.5; }
+.opt-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+.opt-row label { font-size:0.78rem; color:var(--muted); font-weight:600; }
+.seg { display:flex; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+.seg button { border:none; background:#fff; padding:7px 14px; font-size:0.82rem; cursor:pointer; color:#374151; }
+.seg button.on { background:var(--brand); color:#fff; }
+.btn { padding:0.75rem 1.1rem; border-radius:999px; cursor:pointer; border:none; font-size:0.85rem; font-weight:600; transition:all .2s; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+.btn-primary { background:var(--brand-gradient); color:#fff; }
+.btn-primary:hover:not(:disabled) { filter:brightness(1.06); transform:translateY(-1px); box-shadow:0 4px 12px rgba(99,102,241,0.3); }
+.btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+.btn-outline { background:#fff; border:1px solid var(--border); color:#374151; }
+.btn-outline:hover { background:#f9fafb; }
+.actions-bar { display:flex; gap:10px; margin-top:8px; flex-wrap:wrap; }
+.actions-bar .btn { flex:1; min-width:150px; }
+.status { font-size:0.8rem; color:var(--muted); text-align:center; margin-top:10px; min-height:18px; }
+.hint { font-size:0.72rem; color:var(--muted); margin-top:12px; line-height:1.5; }
+.fileinfo { font-size:0.82rem; color:var(--text); font-weight:600; margin-bottom:14px; text-align:center; }
+.results { display:none; margin:16px 0; }
+.stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.stat { background:#fafafa; border:1px solid var(--border); border-radius:10px; padding:12px 10px; text-align:center; }
+.stat .lbl { font-size:0.68rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.03em; }
+.stat .val { font-size:1.15rem; font-weight:700; margin-top:4px; }
+.stat.saved .val { color:#16a34a; }
+@media (max-width:520px){ .stat-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<h1 class="page-title">PDF Compress <span class="badge">Free</span></h1>
+<p class="page-subtitle">Shrink your PDF's file size right in your browser. Nothing is uploaded.</p>
+
+<div class="wrap">
+  <div class="card">
+    <div class="dropzone" id="dropzone">
+      <svg width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Click or drag a PDF here</span>
+      <span style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">One file at a time</span>
+      <input type="file" id="fileInput" accept="application/pdf" style="display:none;" />
+    </div>
+
+    <div id="controls" style="display:none;">
+      <div class="fileinfo" id="fileInfo"></div>
+
+      <div class="opt-row">
+        <label>Compression</label>
+        <div class="seg" id="lvlSeg">
+          <button data-lvl="high">High quality</button>
+          <button data-lvl="balanced" class="on">Balanced</button>
+          <button data-lvl="small">Small</button>
+        </div>
+      </div>
+
+      <div class="results" id="results">
+        <div class="stat-grid">
+          <div class="stat"><div class="lbl">Original</div><div class="val" id="origVal">—</div></div>
+          <div class="stat"><div class="lbl">Compressed</div><div class="val" id="newVal">—</div></div>
+          <div class="stat saved"><div class="lbl">Saved</div><div class="val" id="savedVal">—</div></div>
+        </div>
+      </div>
+
+      <div class="actions-bar">
+        <button class="btn btn-outline" id="resetBtn">Choose another</button>
+        <button class="btn btn-primary" id="compressBtn">Compress PDF</button>
+        <button class="btn btn-primary" id="downloadBtn" style="display:none;">Download compressed.pdf</button>
+      </div>
+      <div class="status" id="status"></div>
+    </div>
+
+    <div class="hint">Note: this compresses by rasterizing each page (text becomes an image), so it works best for scanned or image-heavy PDFs. Selectable/searchable text will be flattened into the page image. Everything runs locally — your file never leaves this browser.</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+<script>
+(function () {
+  if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+  var fileInput   = document.getElementById('fileInput');
+  var dropzone    = document.getElementById('dropzone');
+  var controls    = document.getElementById('controls');
+  var fileInfo    = document.getElementById('fileInfo');
+  var results     = document.getElementById('results');
+  var origVal     = document.getElementById('origVal');
+  var newVal      = document.getElementById('newVal');
+  var savedVal    = document.getElementById('savedVal');
+  var compressBtn = document.getElementById('compressBtn');
+  var downloadBtn = document.getElementById('downloadBtn');
+  var resetBtn    = document.getElementById('resetBtn');
+  var statusEl    = document.getElementById('status');
+
+  var LEVELS = {
+    high:     { scale: 2.0, jpeg: 0.8 },
+    balanced: { scale: 1.5, jpeg: 0.6 },
+    small:    { scale: 1.0, jpeg: 0.5 }
+  };
+
+  var srcBytes = null, baseName = 'document', level = 'balanced';
+  var outBlob = null, origSize = 0;
+
+  function setStatus(m){ statusEl.textContent = m || ''; }
+  function fmtSize(bytes){
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/(1024*1024)).toFixed(2) + ' MB';
+  }
+
+  document.querySelectorAll('#lvlSeg button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('#lvlSeg button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on'); level = b.dataset.lvl;
+      // any previous result is stale once level changes
+      outBlob = null;
+      results.style.display = 'none';
+      downloadBtn.style.display = 'none';
+      compressBtn.style.display = '';
+      setStatus('');
+    });
+  });
+
+  async function loadFile(file){
+    if (!file || (file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name))) { alert('Please choose a PDF file.'); return; }
+    if (!window.pdfjsLib || !window.PDFLib) { alert('A required library failed to load. Check your connection.'); return; }
+    try {
+      baseName = file.name.replace(/\.pdf$/i,'') || 'document';
+      srcBytes = new Uint8Array(await file.arrayBuffer());
+      origSize = srcBytes.length;
+      // quick validation load (pass a copy — pdf.js detaches the buffer)
+      var probe = await pdfjsLib.getDocument({ data: srcBytes.slice(0) }).promise;
+      var n = probe.numPages;
+      try { probe.destroy(); } catch(e){}
+      dropzone.style.display = 'none';
+      controls.style.display = 'block';
+      fileInfo.textContent = baseName + '.pdf — ' + n + ' page' + (n === 1 ? '' : 's') + ' — ' + fmtSize(origSize);
+      outBlob = null;
+      results.style.display = 'none';
+      downloadBtn.style.display = 'none';
+      compressBtn.style.display = '';
+      setStatus('');
+    } catch (err) { console.error(err); alert('Could not read this PDF — it may be corrupted or password-protected.'); }
+  }
+
+  async function compress(){
+    if (!srcBytes) return;
+    var opt = LEVELS[level];
+    compressBtn.disabled = true;
+    resetBtn.disabled = true;
+    downloadBtn.style.display = 'none';
+    outBlob = null;
+    try {
+      setStatus('Opening PDF…');
+      var pdf = await pdfjsLib.getDocument({ data: srcBytes.slice(0) }).promise;
+      var total = pdf.numPages;
+      var outDoc = await PDFLib.PDFDocument.create();
+
+      for (var i = 1; i <= total; i++) {
+        setStatus('Compressing page ' + i + ' / ' + total + '…');
+        var page = await pdf.getPage(i);
+
+        // original page size in PDF points (scale 1)
+        var baseVp = page.getViewport({ scale: 1 });
+        var ptW = baseVp.width, ptH = baseVp.height;
+
+        // rasterize at chosen scale
+        var vp = page.getViewport({ scale: opt.scale });
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.ceil(vp.width));
+        canvas.height = Math.max(1, Math.ceil(vp.height));
+        var ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        await page.render({ canvasContext: ctx, viewport: vp }).promise;
+
+        var dataUrl = canvas.toDataURL('image/jpeg', opt.jpeg);
+        var jpgBytes = dataURLtoU8(dataUrl);
+        var img = await outDoc.embedJpg(jpgBytes);
+        var newPage = outDoc.addPage([ptW, ptH]);
+        newPage.drawImage(img, { x: 0, y: 0, width: ptW, height: ptH });
+
+        // free canvas
+        canvas.width = canvas.height = 0;
+      }
+      try { pdf.destroy(); } catch(e){}
+
+      setStatus('Building compressed PDF…');
+      var outBytes = await outDoc.save();
+      outBlob = new Blob([outBytes], { type: 'application/pdf' });
+
+      var newSize = outBlob.size;
+      origVal.textContent = fmtSize(origSize);
+      newVal.textContent = fmtSize(newSize);
+      var pct = origSize > 0 ? Math.round((1 - newSize / origSize) * 100) : 0;
+      if (pct >= 0) {
+        savedVal.textContent = pct + '%';
+        savedVal.parentElement.classList.add('saved');
+      } else {
+        savedVal.textContent = pct + '%';
+      }
+      results.style.display = 'block';
+
+      downloadBtn.style.display = '';
+      compressBtn.style.display = 'none';
+      if (newSize >= origSize) {
+        setStatus('Done — but this file was already well compressed, so no savings this time. Try the "Small" level.');
+      } else {
+        setStatus('Done — reduced from ' + fmtSize(origSize) + ' to ' + fmtSize(newSize) + '.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Failed to compress this PDF.');
+      setStatus('');
+    } finally {
+      compressBtn.disabled = false;
+      resetBtn.disabled = false;
+    }
+  }
+
+  function dataURLtoU8(dataUrl){
+    var b64 = dataUrl.split(',')[1];
+    var bin = atob(b64);
+    var len = bin.length;
+    var arr = new Uint8Array(len);
+    for (var i = 0; i < len; i++) arr[i] = bin.charCodeAt(i);
+    return arr;
+  }
+
+  function downloadOut(){
+    if (!outBlob) return;
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(outBlob);
+    a.download = 'compressed.pdf';
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+  }
+
+  function reset(){
+    srcBytes = null; outBlob = null; origSize = 0;
+    fileInput.value = '';
+    controls.style.display = 'none';
+    dropzone.style.display = 'flex';
+    results.style.display = 'none';
+    downloadBtn.style.display = 'none';
+    compressBtn.style.display = '';
+    setStatus('');
+  }
+
+  fileInput.addEventListener('change', function(e){ if (e.target.files[0]) loadFile(e.target.files[0]); });
+  dropzone.addEventListener('click', function(){ fileInput.click(); });
+  compressBtn.addEventListener('click', compress);
+  downloadBtn.addEventListener('click', downloadOut);
+  resetBtn.addEventListener('click', reset);
+  ['dragenter','dragover'].forEach(function(ev){ dropzone.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.add('drag'); }); });
+  ['dragleave','drop'].forEach(function(ev){ dropzone.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.remove('drag'); }); });
+  dropzone.addEventListener('drop', function(e){ if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
+})();
+</script>
+  <script src="nav.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Image Resize &amp; Crop – fique.my</title>
+  <meta name="description" content="Free in-browser image resize &amp; crop tool with passport-photo presets. Nothing leaves your browser — no uploads." />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="favicon.ico" />
+  <style>
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+:root { --bg:#f5f7fa; --card-bg:#fff; --radius:12px; --shadow:0 2px 8px rgba(0,0,0,0.06); --text:#1f2d3d; --muted:#6b7280; --border:#e8eaee; --brand:#6366f1; --brand-gradient:linear-gradient(90deg,#6366f1 0%,#a78bfa 100%); }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:"Inter",system-ui,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+.page-title { text-align:center; font-size:1.5rem; font-weight:700; margin:24px 0 8px; }
+.page-subtitle { text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:20px; padding:0 1rem; }
+.wrap { max-width:840px; margin:auto; padding:0 1.25rem 2rem; }
+.card { background:var(--card-bg); padding:1.25rem; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:1.25rem; }
+.badge { display:inline-block; background:#eef2ff; color:var(--brand); font-size:0.7rem; font-weight:600; padding:3px 8px; border-radius:999px; }
+.dropzone { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:200px; border:2px dashed var(--border); border-radius:12px; color:var(--muted); font-size:0.9rem; cursor:pointer; transition:border-color .2s,background .2s; text-align:center; padding:1rem; }
+.dropzone:hover, .dropzone.drag { border-color:var(--brand); background:#eef2ff; }
+.dropzone svg { margin-bottom:12px; opacity:.5; }
+.opt-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+.opt-row label { font-size:0.78rem; color:var(--muted); font-weight:600; }
+.seg { display:flex; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+.seg button { border:none; background:#fff; padding:7px 14px; font-size:0.82rem; cursor:pointer; color:#374151; }
+.seg button.on { background:var(--brand); color:#fff; }
+select, input[type=range] { accent-color:var(--brand); }
+select { padding:7px 10px; border:1px solid var(--border); border-radius:8px; font-size:0.82rem; }
+input[type=number] { padding:7px 10px; border:1px solid var(--border); border-radius:8px; font-size:0.82rem; width:92px; }
+input[type=checkbox] { accent-color:var(--brand); width:15px; height:15px; }
+.btn { padding:0.75rem 1.1rem; border-radius:999px; cursor:pointer; border:none; font-size:0.85rem; font-weight:600; transition:all .2s; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+.btn-primary { background:var(--brand-gradient); color:#fff; }
+.btn-primary:hover:not(:disabled) { filter:brightness(1.06); transform:translateY(-1px); box-shadow:0 4px 12px rgba(99,102,241,0.3); }
+.btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+.btn-outline { background:#fff; border:1px solid var(--border); color:#374151; }
+.btn-outline:hover { background:#f9fafb; }
+.actions-bar { display:flex; gap:10px; margin-top:8px; flex-wrap:wrap; }
+.actions-bar .btn { flex:1; min-width:150px; }
+.status { font-size:0.8rem; color:var(--muted); text-align:center; margin-top:10px; min-height:18px; }
+.hint { font-size:0.72rem; color:var(--muted); margin-top:12px; line-height:1.5; }
+.mode-switch { display:flex; justify-content:center; margin-bottom:16px; }
+.preview-wrap { display:flex; justify-content:center; align-items:center; background:#fafafa; border:1px solid var(--border); border-radius:10px; padding:12px; margin:14px 0; overflow:auto; }
+.preview-wrap img { max-width:100%; display:block; border-radius:4px; }
+/* crop stage */
+.crop-stage { position:relative; display:inline-block; line-height:0; margin:0 auto; touch-action:none; }
+.crop-stage img { display:block; max-width:100%; user-select:none; -webkit-user-drag:none; }
+.crop-overlay { position:absolute; inset:0; pointer-events:none; }
+.crop-shade { position:absolute; background:rgba(0,0,0,0.45); pointer-events:none; }
+.crop-box { position:absolute; border:1px solid #fff; box-shadow:0 0 0 1px rgba(99,102,241,0.9); cursor:move; box-sizing:border-box; }
+.crop-box .grid-line { position:absolute; background:rgba(255,255,255,0.4); }
+.crop-box .handle { position:absolute; width:12px; height:12px; background:#fff; border:1px solid var(--brand); border-radius:2px; }
+.crop-box .h-nw{ left:-6px; top:-6px; cursor:nwse-resize; }
+.crop-box .h-ne{ right:-6px; top:-6px; cursor:nesw-resize; }
+.crop-box .h-sw{ left:-6px; bottom:-6px; cursor:nesw-resize; }
+.crop-box .h-se{ right:-6px; bottom:-6px; cursor:nwse-resize; }
+.dims { font-size:0.8rem; color:var(--muted); text-align:center; margin:6px 0; font-weight:600; }
+.preset-grid { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+.preset-grid button { border:1px solid var(--border); background:#fff; padding:7px 12px; font-size:0.78rem; border-radius:8px; cursor:pointer; color:#374151; }
+.preset-grid button.on { background:var(--brand); color:#fff; border-color:var(--brand); }
+.section-lbl { font-size:0.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:700; margin:4px 0 8px; }
+  </style>
+</head>
+<body>
+<h1 class="page-title">Image Resize &amp; Crop <span class="badge">Free</span></h1>
+<p class="page-subtitle">Resize or crop images with passport-photo presets. 100% in your browser, nothing is uploaded.</p>
+
+<div class="wrap">
+  <div class="card">
+    <div class="dropzone" id="dropzone">
+      <svg width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      <span>Click or drag an image here</span>
+      <span style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">PNG, JPG, WEBP, GIF — one at a time</span>
+      <input type="file" id="fileInput" accept="image/*" style="display:none;" />
+    </div>
+
+    <div id="controls" style="display:none;">
+      <div class="mode-switch">
+        <div class="seg" id="modeSeg">
+          <button data-mode="resize" class="on">Resize</button>
+          <button data-mode="crop">Crop</button>
+        </div>
+      </div>
+
+      <!-- RESIZE MODE -->
+      <div id="resizePanel">
+        <div class="opt-row">
+          <label>Width (px)</label>
+          <input type="number" id="wIn" min="1" step="1" />
+          <label>Height (px)</label>
+          <input type="number" id="hIn" min="1" step="1" />
+          <label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer;">
+            <input type="checkbox" id="lockAr" checked /> Lock aspect ratio
+          </label>
+        </div>
+        <div class="opt-row">
+          <label>Quick scale</label>
+          <div class="preset-grid" style="margin-bottom:0;">
+            <button data-pct="25">25%</button>
+            <button data-pct="50">50%</button>
+            <button data-pct="75">75%</button>
+            <button data-pct="100">100%</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CROP MODE -->
+      <div id="cropPanel" style="display:none;">
+        <div class="section-lbl">Aspect ratio</div>
+        <div class="preset-grid" id="ratioGrid">
+          <button data-ar="free" class="on">Free</button>
+          <button data-ar="1:1">1:1</button>
+          <button data-ar="4:3">4:3</button>
+          <button data-ar="16:9">16:9</button>
+          <button data-ar="my35x45">MY Passport 35×45mm</button>
+          <button data-ar="us2x2">US 2×2in</button>
+        </div>
+        <div class="crop-stage" id="cropStage">
+          <img id="cropImg" alt="" />
+          <div class="crop-overlay" id="cropOverlay"></div>
+        </div>
+      </div>
+
+      <!-- shared output options -->
+      <div class="opt-row" style="margin-top:14px;">
+        <label>Format</label>
+        <div class="seg" id="fmtSeg">
+          <button data-fmt="png" class="on">PNG</button>
+          <button data-fmt="jpeg">JPG</button>
+        </div>
+        <label style="margin-left:8px;" id="qLabel">Quality</label>
+        <input type="range" id="qRange" min="0.3" max="1" step="0.05" value="0.92" style="width:120px;" />
+        <span id="qVal" style="font-size:0.78rem;color:var(--muted);">92%</span>
+      </div>
+
+      <div class="dims" id="dims"></div>
+
+      <div class="actions-bar">
+        <button class="btn btn-outline" id="resetBtn">Choose another</button>
+        <button class="btn btn-primary" id="dlBtn">Download</button>
+      </div>
+      <div class="status" id="status"></div>
+    </div>
+    <div class="hint">Resize keeps aspect ratio locked by default. Crop maps your on-screen selection to full-resolution pixels. Passport presets are sized at 300 DPI (Malaysia 35×45mm ≈ 413×531px, US 2×2in = 600×600px).</div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var $ = function(id){ return document.getElementById(id); };
+  var fileInput = $('fileInput'), dropzone = $('dropzone'), controls = $('controls');
+  var modeSeg = $('modeSeg'), resizePanel = $('resizePanel'), cropPanel = $('cropPanel');
+  var wIn = $('wIn'), hIn = $('hIn'), lockAr = $('lockAr');
+  var fmtSeg = $('fmtSeg'), qRange = $('qRange'), qVal = $('qVal'), qLabel = $('qLabel');
+  var dimsEl = $('dims'), statusEl = $('status'), dlBtn = $('dlBtn'), resetBtn = $('resetBtn');
+  var cropStage = $('cropStage'), cropImg = $('cropImg'), cropOverlay = $('cropOverlay');
+  var ratioGrid = $('ratioGrid');
+
+  var img = new Image();          // source image (natural resolution)
+  var baseName = 'image', fmt = 'png';
+  var mode = 'resize';
+  var natW = 0, natH = 0, ratio = 1;
+  var cropAR = null;              // number (w/h) or null for free
+  var crop = { x:0, y:0, w:0, h:0 }; // in NATURAL pixel coords
+
+  function setStatus(m){ statusEl.textContent = m || ''; }
+  function ext(){ return fmt === 'jpeg' ? 'jpg' : 'png'; }
+  function mime(){ return fmt === 'jpeg' ? 'image/jpeg' : 'image/png'; }
+  function clamp(v,a,b){ return v < a ? a : (v > b ? b : v); }
+
+  // ---- passport pixel sizes at 300 DPI ----
+  var DPI = 300;
+  function mmToPx(mm){ return Math.round(mm / 25.4 * DPI); }
+  function inToPx(inch){ return Math.round(inch * DPI); }
+  var PASSPORT = {
+    my35x45: { w: mmToPx(35), h: mmToPx(45) },  // ~413 x 531
+    us2x2:   { w: inToPx(2),  h: inToPx(2) }     // 600 x 600
+  };
+
+  // ---------- file loading ----------
+  function loadFile(file){
+    if (!file || !/^image\//.test(file.type)) { alert('Please choose an image file.'); return; }
+    baseName = (file.name || 'image').replace(/\.[^.]+$/,'') || 'image';
+    var url = URL.createObjectURL(file);
+    img = new Image();
+    img.onload = function(){
+      natW = img.naturalWidth; natH = img.naturalHeight; ratio = natW / natH;
+      dropzone.style.display = 'none';
+      controls.style.display = 'block';
+      wIn.value = natW; hIn.value = natH;
+      cropImg.src = url;
+      setMode(mode);
+      setStatus('Loaded ' + natW + ' × ' + natH + ' px.');
+    };
+    img.onerror = function(){ alert('Could not read this image.'); };
+    img.src = url;
+  }
+
+  // ---------- mode switching ----------
+  function setMode(m){
+    mode = m;
+    Array.prototype.forEach.call(modeSeg.querySelectorAll('button'), function(b){
+      b.classList.toggle('on', b.dataset.mode === m);
+    });
+    if (m === 'resize') {
+      resizePanel.style.display = 'block';
+      cropPanel.style.display = 'none';
+      wIn.value = natW; hIn.value = natH;
+      updateDims();
+    } else {
+      resizePanel.style.display = 'none';
+      cropPanel.style.display = 'block';
+      // wait a tick for image layout, then init crop box
+      requestAnimationFrame(function(){ initCropBox(); });
+    }
+  }
+
+  // ---------- RESIZE ----------
+  wIn.addEventListener('input', function(){
+    if (lockAr.checked && wIn.value) {
+      var w = parseInt(wIn.value, 10);
+      if (w > 0) hIn.value = Math.max(1, Math.round(w / ratio));
+    }
+    updateDims();
+  });
+  hIn.addEventListener('input', function(){
+    if (lockAr.checked && hIn.value) {
+      var h = parseInt(hIn.value, 10);
+      if (h > 0) wIn.value = Math.max(1, Math.round(h * ratio));
+    }
+    updateDims();
+  });
+  lockAr.addEventListener('change', function(){
+    if (lockAr.checked && wIn.value) hIn.value = Math.max(1, Math.round(parseInt(wIn.value,10) / ratio));
+    updateDims();
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('#resizePanel [data-pct]'), function(b){
+    b.addEventListener('click', function(){
+      var pct = parseInt(b.dataset.pct, 10) / 100;
+      wIn.value = Math.max(1, Math.round(natW * pct));
+      hIn.value = Math.max(1, Math.round(natH * pct));
+      updateDims();
+    });
+  });
+
+  // ---------- CROP box (screen coords -> natural coords) ----------
+  var box = null; // DOM element
+  function scale(){ // natural px per screen px
+    var dispW = cropImg.clientWidth || natW;
+    return natW / dispW;
+  }
+  function buildOverlay(){
+    cropOverlay.innerHTML = '';
+    box = document.createElement('div');
+    box.className = 'crop-box';
+    box.style.pointerEvents = 'auto';
+    ['nw','ne','sw','se'].forEach(function(k){
+      var h = document.createElement('div'); h.className = 'handle h-' + k; h.dataset.h = k; box.appendChild(h);
+    });
+    // rule-of-thirds grid
+    [33.33,66.66].forEach(function(p){
+      var v = document.createElement('div'); v.className='grid-line'; v.style.cssText='top:0;bottom:0;width:1px;left:'+p+'%'; box.appendChild(v);
+      var hh = document.createElement('div'); hh.className='grid-line'; hh.style.cssText='left:0;right:0;height:1px;top:'+p+'%'; box.appendChild(hh);
+    });
+    cropOverlay.appendChild(box);
+    attachDrag();
+  }
+  function initCropBox(){
+    if (!cropImg.clientWidth) { requestAnimationFrame(initCropBox); return; }
+    buildOverlay();
+    // default crop in natural coords
+    var cw, ch;
+    if (cropAR) {
+      // fit AR inside image
+      if (natW / natH > cropAR) { ch = natH; cw = ch * cropAR; }
+      else { cw = natW; ch = cw / cropAR; }
+      cw *= 0.9; ch *= 0.9;
+    } else {
+      cw = natW * 0.8; ch = natH * 0.8;
+    }
+    crop.w = Math.round(cw); crop.h = Math.round(ch);
+    crop.x = Math.round((natW - crop.w) / 2);
+    crop.y = Math.round((natH - crop.h) / 2);
+    renderCrop();
+  }
+  function renderCrop(){
+    if (!box) return;
+    var s = scale();
+    var left = crop.x / s, top = crop.y / s, w = crop.w / s, h = crop.h / s;
+    box.style.left = left + 'px'; box.style.top = top + 'px';
+    box.style.width = w + 'px'; box.style.height = h + 'px';
+    drawShades(left, top, w, h);
+    updateDims();
+  }
+  function drawShades(left, top, w, h){
+    // remove old shades
+    Array.prototype.forEach.call(cropOverlay.querySelectorAll('.crop-shade'), function(e){ e.remove(); });
+    var W = cropImg.clientWidth, H = cropImg.clientHeight;
+    function shade(x,y,ww,hh){ var d=document.createElement('div'); d.className='crop-shade'; d.style.cssText='left:'+x+'px;top:'+y+'px;width:'+ww+'px;height:'+hh+'px'; cropOverlay.insertBefore(d, box); }
+    shade(0,0,W,top);                          // top
+    shade(0,top+h,W,H-(top+h));                // bottom
+    shade(0,top,left,h);                       // left
+    shade(left+w,top,W-(left+w),h);            // right
+  }
+  function attachDrag(){
+    var mvState = null;
+    function ptr(e){ var t = e.touches ? e.touches[0] : e; return { x:t.clientX, y:t.clientY }; }
+    box.addEventListener('mousedown', start);
+    box.addEventListener('touchstart', start, { passive:false });
+    function start(e){
+      e.preventDefault();
+      var handle = e.target.dataset ? e.target.dataset.h : null;
+      var p = ptr(e);
+      mvState = { handle: handle, sx: p.x, sy: p.y, start: { x:crop.x, y:crop.y, w:crop.w, h:crop.h } };
+      window.addEventListener('mousemove', move);
+      window.addEventListener('touchmove', move, { passive:false });
+      window.addEventListener('mouseup', end);
+      window.addEventListener('touchend', end);
+    }
+    function move(e){
+      if (!mvState) return;
+      e.preventDefault();
+      var p = ptr(e), s = scale();
+      var dx = (p.x - mvState.sx) * s, dy = (p.y - mvState.sy) * s;
+      var st = mvState.start, h = mvState.handle;
+      var nx = st.x, ny = st.y, nw = st.w, nh = st.h;
+      if (!h) { // move
+        nx = clamp(st.x + dx, 0, natW - st.w);
+        ny = clamp(st.y + dy, 0, natH - st.h);
+      } else {
+        // resize per corner
+        var right = st.x + st.w, bottom = st.y + st.h;
+        if (h === 'nw') { nx = st.x + dx; ny = st.y + dy; nw = right - nx; nh = bottom - ny; }
+        if (h === 'ne') { ny = st.y + dy; nw = st.w + dx; nh = bottom - ny; }
+        if (h === 'sw') { nx = st.x + dx; nw = right - nx; nh = st.h + dy; }
+        if (h === 'se') { nw = st.w + dx; nh = st.h + dy; }
+        // aspect lock
+        if (cropAR) {
+          if (h === 'nw' || h === 'se') { nh = nw / cropAR; } else { nh = nw / cropAR; }
+          // recompute anchored edges
+          if (h === 'nw') { ny = bottom - nh; nx = right - nw; }
+          if (h === 'ne') { ny = bottom - nh; }
+          if (h === 'sw') { nx = right - nw; }
+        }
+        // min size
+        var minN = 10;
+        if (nw < minN) { nw = minN; if (cropAR) nh = nw / cropAR; }
+        if (nh < minN) { nh = minN; if (cropAR) nw = nh * cropAR; }
+        // clamp within bounds
+        if (nx < 0) { nw += nx; nx = 0; if (cropAR) nh = nw / cropAR; }
+        if (ny < 0) { nh += ny; ny = 0; if (cropAR) nw = nh * cropAR; }
+        if (nx + nw > natW) { nw = natW - nx; if (cropAR) nh = nw / cropAR; }
+        if (ny + nh > natH) { nh = natH - ny; if (cropAR) nw = nh * cropAR; }
+      }
+      crop.x = Math.round(nx); crop.y = Math.round(ny);
+      crop.w = Math.round(nw); crop.h = Math.round(nh);
+      renderCrop();
+    }
+    function end(){
+      mvState = null;
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('touchmove', move);
+      window.removeEventListener('mouseup', end);
+      window.removeEventListener('touchend', end);
+    }
+  }
+  window.addEventListener('resize', function(){ if (mode === 'crop' && box) renderCrop(); });
+
+  // ratio buttons
+  Array.prototype.forEach.call(ratioGrid.querySelectorAll('button'), function(b){
+    b.addEventListener('click', function(){
+      Array.prototype.forEach.call(ratioGrid.querySelectorAll('button'), function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      var v = b.dataset.ar;
+      if (v === 'free') cropAR = null;
+      else if (v === 'my35x45') cropAR = PASSPORT.my35x45.w / PASSPORT.my35x45.h;
+      else if (v === 'us2x2') cropAR = PASSPORT.us2x2.w / PASSPORT.us2x2.h;
+      else { var p = v.split(':'); cropAR = parseFloat(p[0]) / parseFloat(p[1]); }
+      initCropBox();
+    });
+  });
+
+  // ---------- output options ----------
+  Array.prototype.forEach.call(fmtSeg.querySelectorAll('button'), function(b){
+    b.addEventListener('click', function(){
+      Array.prototype.forEach.call(fmtSeg.querySelectorAll('button'), function(x){ x.classList.remove('on'); });
+      b.classList.add('on'); fmt = b.dataset.fmt;
+      var jpg = fmt === 'jpeg';
+      qRange.disabled = !jpg; qLabel.style.opacity = jpg ? 1 : .4; qVal.style.opacity = jpg ? 1 : .4;
+    });
+  });
+  qRange.addEventListener('input', function(){ qVal.textContent = Math.round(qRange.value * 100) + '%'; });
+
+  function updateDims(){
+    if (mode === 'resize') {
+      dimsEl.textContent = 'Output: ' + (parseInt(wIn.value,10)||0) + ' × ' + (parseInt(hIn.value,10)||0) + ' px';
+    } else {
+      dimsEl.textContent = 'Crop selection: ' + crop.w + ' × ' + crop.h + ' px (source pixels)';
+    }
+  }
+
+  modeSeg.addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (!b) return; setMode(b.dataset.mode);
+  });
+
+  // ---------- render + download ----------
+  function makeCanvas(w, h){
+    var c = document.createElement('canvas');
+    c.width = Math.max(1, w); c.height = Math.max(1, h);
+    var ctx = c.getContext('2d');
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+    if (fmt === 'jpeg') { ctx.fillStyle = '#fff'; ctx.fillRect(0,0,c.width,c.height); }
+    return { c:c, ctx:ctx };
+  }
+  function doExport(){
+    var out;
+    if (mode === 'resize') {
+      var w = parseInt(wIn.value,10), h = parseInt(hIn.value,10);
+      if (!w || !h || w < 1 || h < 1) { alert('Enter valid width and height.'); return; }
+      out = makeCanvas(w, h);
+      out.ctx.drawImage(img, 0, 0, natW, natH, 0, 0, w, h);
+    } else {
+      if (crop.w < 1 || crop.h < 1) { alert('Selection too small.'); return; }
+      out = makeCanvas(crop.w, crop.h);
+      out.ctx.drawImage(img, crop.x, crop.y, crop.w, crop.h, 0, 0, crop.w, crop.h);
+    }
+    out.c.toBlob(function(blob){
+      if (!blob) { alert('Export failed.'); return; }
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      var suffix = mode === 'crop' ? '-crop' : '-' + out.c.width + 'x' + out.c.height;
+      a.download = baseName + suffix + '.' + ext();
+      a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+      setStatus('Downloaded ' + out.c.width + ' × ' + out.c.height + ' px ' + ext().toUpperCase() + '.');
+    }, mime(), parseFloat(qRange.value));
+  }
+
+  function reset(){
+    fileInput.value = '';
+    controls.style.display = 'none';
+    dropzone.style.display = 'flex';
+    cropOverlay.innerHTML = ''; box = null;
+    setStatus('');
+  }
+
+  // ---------- events ----------
+  fileInput.addEventListener('change', function(e){ if (e.target.files[0]) loadFile(e.target.files[0]); });
+  dropzone.addEventListener('click', function(){ fileInput.click(); });
+  dlBtn.addEventListener('click', doExport);
+  resetBtn.addEventListener('click', reset);
+  ['dragenter','dragover'].forEach(function(ev){ dropzone.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.add('drag'); }); });
+  ['dragleave','drop'].forEach(function(ev){ dropzone.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.remove('drag'); }); });
+  dropzone.addEventListener('drop', function(e){ if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
+})();
+</script>
+  <script src="nav.js" defer></script>
+</body>
+</html>

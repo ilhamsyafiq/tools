@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Image Compressor – fique.my</title>
+  <meta name="description" content="Free in-browser image compressor & optimizer. Shrink JPEG, PNG and WebP images — nothing leaves your browser." />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="favicon.ico" />
+  <style>
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+:root { --bg:#f5f7fa; --card-bg:#fff; --radius:12px; --shadow:0 2px 8px rgba(0,0,0,0.06); --text:#1f2d3d; --muted:#6b7280; --border:#e8eaee; --brand:#6366f1; --brand-gradient:linear-gradient(90deg,#6366f1 0%,#a78bfa 100%); }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:"Inter",system-ui,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+.page-title { text-align:center; font-size:1.5rem; font-weight:700; margin:24px 0 8px; }
+.page-subtitle { text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:20px; padding:0 1rem; }
+.wrap { max-width:760px; margin:auto; padding:0 1.25rem 2rem; }
+.card { background:var(--card-bg); padding:1.25rem; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:1.25rem; }
+.badge { display:inline-block; background:#eef2ff; color:var(--brand); font-size:0.7rem; font-weight:600; padding:3px 8px; border-radius:999px; }
+.dropzone { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:200px; border:2px dashed var(--border); border-radius:12px; color:var(--muted); font-size:0.9rem; cursor:pointer; transition:border-color .2s,background .2s; text-align:center; padding:1rem; }
+.dropzone:hover, .dropzone.drag { border-color:var(--brand); background:#eef2ff; }
+.dropzone svg { margin-bottom:12px; opacity:.5; }
+.opt-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+.opt-row label { font-size:0.78rem; color:var(--muted); font-weight:600; }
+.seg { display:flex; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+.seg button { border:none; background:#fff; padding:7px 14px; font-size:0.82rem; cursor:pointer; color:#374151; }
+.seg button.on { background:var(--brand); color:#fff; }
+select, input[type=range] { accent-color:var(--brand); }
+select { padding:7px 10px; border:1px solid var(--border); border-radius:8px; font-size:0.82rem; }
+input[type=number] { padding:7px 10px; border:1px solid var(--border); border-radius:8px; font-size:0.82rem; width:100px; }
+input[type=range] { cursor:pointer; }
+.qval { font-size:0.82rem; font-weight:600; color:var(--brand); min-width:34px; text-align:right; }
+.thumb-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; max-height:420px; overflow-y:auto; padding:8px; border:1px solid var(--border); border-radius:10px; margin:14px 0; background:#fafafa; }
+.thumb-cell { position:relative; background:#fff; border:1px solid var(--border); border-radius:6px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.08); display:flex; flex-direction:column; }
+.thumb-cell .imgbox { position:relative; background:#f0f0f0; }
+.thumb-cell img { width:100%; display:block; }
+.thumb-cell .dl { position:absolute; top:3px; right:3px; background:var(--brand); color:#fff; border:none; border-radius:6px; font-size:12px; padding:2px 7px; cursor:pointer; opacity:.92; }
+.thumb-cell .dl:disabled { opacity:.5; cursor:default; }
+.thumb-cell .meta { padding:7px 8px; font-size:11px; line-height:1.5; }
+.thumb-cell .name { font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:3px; }
+.thumb-cell .sizes { color:var(--muted); }
+.thumb-cell .saved { font-weight:700; }
+.saved.good { color:#16a34a; }
+.saved.bad { color:#dc2626; }
+.btn { padding:0.75rem 1.1rem; border-radius:999px; cursor:pointer; border:none; font-size:0.85rem; font-weight:600; transition:all .2s; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+.btn-primary { background:var(--brand-gradient); color:#fff; }
+.btn-primary:hover:not(:disabled) { filter:brightness(1.06); transform:translateY(-1px); box-shadow:0 4px 12px rgba(99,102,241,0.3); }
+.btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+.btn-outline { background:#fff; border:1px solid var(--border); color:#374151; }
+.btn-outline:hover { background:#f9fafb; }
+.actions-bar { display:flex; gap:10px; margin-top:8px; flex-wrap:wrap; }
+.actions-bar .btn { flex:1; min-width:150px; }
+.status { font-size:0.8rem; color:var(--muted); text-align:center; margin-top:10px; min-height:18px; }
+.hint { font-size:0.72rem; color:var(--muted); margin-top:12px; line-height:1.5; }
+.totals { font-size:0.8rem; text-align:center; margin-top:6px; color:var(--text); font-weight:600; }
+  </style>
+</head>
+<body>
+<h1 class="page-title">Image Compressor <span class="badge">Free</span></h1>
+<p class="page-subtitle">Shrink and optimize JPEG, PNG &amp; WebP images. 100% in your browser, nothing is uploaded.</p>
+
+<div class="wrap">
+  <div class="card">
+    <div class="dropzone" id="dropzone">
+      <svg width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <span>Click or drag images here</span>
+      <span style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">Multiple files supported</span>
+      <input type="file" id="fileInput" accept="image/*" multiple style="display:none;" />
+    </div>
+
+    <div id="controls" style="display:none;">
+      <div class="opt-row">
+        <label>Quality</label>
+        <input type="range" id="qSlider" min="10" max="100" value="75" style="flex:1;min-width:120px;" />
+        <span class="qval" id="qVal">75</span>
+      </div>
+      <div class="opt-row">
+        <label>Max width</label>
+        <input type="number" id="maxW" placeholder="none" min="1" step="1" />
+        <span style="font-size:0.72rem;color:var(--muted);">px (optional — downscale if wider)</span>
+      </div>
+      <div class="opt-row">
+        <label>Output format</label>
+        <div class="seg" id="fmtSeg">
+          <button data-fmt="original" class="on">Keep original</button>
+          <button data-fmt="jpeg">JPEG</button>
+          <button data-fmt="webp">WebP</button>
+        </div>
+      </div>
+
+      <div class="thumb-grid" id="thumbGrid"></div>
+
+      <div class="totals" id="totals"></div>
+
+      <div class="actions-bar">
+        <button class="btn btn-outline" id="resetBtn">Choose others</button>
+        <button class="btn btn-primary" id="zipBtn">Download all (ZIP)</button>
+      </div>
+      <div class="status" id="status"></div>
+    </div>
+    <div class="hint">Lower the quality or set a max width to shrink further. Hover an image to download it individually, or grab everything as a zip. WebP usually gives the smallest files.</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script>
+(function () {
+  var fileInput = document.getElementById('fileInput');
+  var dropzone  = document.getElementById('dropzone');
+  var controls  = document.getElementById('controls');
+  var thumbGrid = document.getElementById('thumbGrid');
+  var qSlider   = document.getElementById('qSlider');
+  var qVal      = document.getElementById('qVal');
+  var maxW      = document.getElementById('maxW');
+  var zipBtn    = document.getElementById('zipBtn');
+  var resetBtn  = document.getElementById('resetBtn');
+  var statusEl  = document.getElementById('status');
+  var totalsEl  = document.getElementById('totals');
+
+  var items = [];        // { file, name, baseName, img, origSize, blob, cellRefs }
+  var fmt = 'original';
+  var rerunToken = 0;
+
+  function setStatus(m){ statusEl.textContent = m || ''; }
+
+  function humanSize(bytes){
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/1024/1024).toFixed(2) + ' MB';
+  }
+
+  function mimeFor(file){
+    if (fmt === 'jpeg') return 'image/jpeg';
+    if (fmt === 'webp') return 'image/webp';
+    // keep original — but only formats canvas can re-encode; fall back to jpeg for others
+    if (file.type === 'image/png') return 'image/png';
+    if (file.type === 'image/webp') return 'image/webp';
+    return 'image/jpeg';
+  }
+  function extFor(mime){
+    if (mime === 'image/png') return 'png';
+    if (mime === 'image/webp') return 'webp';
+    return 'jpg';
+  }
+  function isLossy(mime){ return mime === 'image/jpeg' || mime === 'image/webp'; }
+
+  document.querySelectorAll('#fmtSeg button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('#fmtSeg button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on'); fmt = b.dataset.fmt; rerun();
+    });
+  });
+
+  qSlider.addEventListener('input', function(){ qVal.textContent = qSlider.value; });
+  qSlider.addEventListener('change', rerun);
+  maxW.addEventListener('change', rerun);
+
+  function loadImage(file){
+    return new Promise(function(resolve, reject){
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function(){ URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = function(){ URL.revokeObjectURL(url); reject(new Error('bad image')); };
+      img.src = url;
+    });
+  }
+
+  function compress(item){
+    var mime = mimeFor(item.file);
+    var img = item.img;
+    var w = img.naturalWidth, h = img.naturalHeight;
+    var mw = parseInt(maxW.value, 10);
+    if (mw && mw > 0 && w > mw){ h = Math.round(h * (mw / w)); w = mw; }
+    var canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    var ctx = canvas.getContext('2d');
+    if (mime === 'image/jpeg'){ ctx.fillStyle = '#fff'; ctx.fillRect(0,0,w,h); }
+    ctx.drawImage(img, 0, 0, w, h);
+    var q = parseInt(qSlider.value, 10) / 100;
+    return new Promise(function(resolve){
+      canvas.toBlob(function(blob){
+        resolve({ blob: blob, mime: mime, dataUrl: canvas.toDataURL(mime, isLossy(mime) ? q : undefined) });
+      }, mime, isLossy(mime) ? q : undefined);
+    });
+  }
+
+  function makeCell(item){
+    var cell = document.createElement('div');
+    cell.className = 'thumb-cell';
+    var box = document.createElement('div'); box.className = 'imgbox';
+    var img = document.createElement('img');
+    var dl = document.createElement('button'); dl.className = 'dl'; dl.textContent = '↓'; dl.title = 'Download this image'; dl.disabled = true;
+    box.appendChild(img); box.appendChild(dl);
+    var meta = document.createElement('div'); meta.className = 'meta';
+    var name = document.createElement('div'); name.className = 'name'; name.textContent = item.name; name.title = item.name;
+    var sizes = document.createElement('div'); sizes.className = 'sizes';
+    var saved = document.createElement('div'); saved.className = 'saved';
+    meta.appendChild(name); meta.appendChild(sizes); meta.appendChild(saved);
+    cell.appendChild(box); cell.appendChild(meta);
+    thumbGrid.appendChild(cell);
+    item.cellRefs = { img: img, dl: dl, sizes: sizes, saved: saved };
+    dl.addEventListener('click', function(){
+      if (item.blob) download(item.blob, item.outName);
+    });
+  }
+
+  async function rerun(){
+    if (!items.length) return;
+    var token = ++rerunToken;
+    zipBtn.disabled = true;
+    var totalOrig = 0, totalNew = 0, done = 0;
+    for (var i = 0; i < items.length; i++){
+      if (token !== rerunToken) return; // superseded
+      var item = items[i];
+      setStatus('Compressing ' + (i+1) + ' / ' + items.length + '…');
+      try {
+        var res = await compress(item);
+        if (token !== rerunToken) return;
+        item.blob = res.blob;
+        item.outName = item.baseName + '.' + extFor(res.mime);
+        var r = item.cellRefs;
+        r.img.src = res.dataUrl;
+        r.dl.disabled = false;
+        var newSize = res.blob.size;
+        var pct = (1 - newSize / item.origSize) * 100;
+        r.sizes.textContent = humanSize(item.origSize) + ' → ' + humanSize(newSize);
+        r.saved.textContent = (pct >= 0 ? '−' : '+') + Math.abs(pct).toFixed(1) + '% ' + (pct >= 0 ? 'saved' : 'larger');
+        r.saved.className = 'saved ' + (pct >= 0 ? 'good' : 'bad');
+        totalOrig += item.origSize; totalNew += newSize; done++;
+      } catch (err){ console.error(err); }
+    }
+    if (token !== rerunToken) return;
+    if (done){
+      var tp = (1 - totalNew / totalOrig) * 100;
+      totalsEl.textContent = 'Total: ' + humanSize(totalOrig) + ' → ' + humanSize(totalNew) +
+        '  (' + (tp >= 0 ? '−' : '+') + Math.abs(tp).toFixed(1) + '%)';
+    }
+    setStatus('');
+    zipBtn.disabled = false;
+  }
+
+  async function addFiles(files){
+    var list = Array.prototype.slice.call(files).filter(function(f){ return /^image\//.test(f.type); });
+    if (!list.length){ alert('Please choose image files.'); return; }
+    dropzone.style.display = 'none';
+    controls.style.display = 'block';
+    for (var i = 0; i < list.length; i++){
+      var file = list[i];
+      try {
+        var img = await loadImage(file);
+        var item = {
+          file: file, name: file.name,
+          baseName: file.name.replace(/\.[^.]+$/,'') || 'image',
+          img: img, origSize: file.size, blob: null, outName: '', cellRefs: null
+        };
+        items.push(item);
+        makeCell(item);
+      } catch (err){ console.error('Skipped', file.name, err); }
+    }
+    rerun();
+  }
+
+  function download(blobOrUrl, name){
+    var a = document.createElement('a');
+    a.href = (typeof blobOrUrl === 'string') ? blobOrUrl : URL.createObjectURL(blobOrUrl);
+    a.download = name; a.click();
+    if (typeof blobOrUrl !== 'string') setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+  }
+
+  async function downloadAll(){
+    if (!items.length) return;
+    zipBtn.disabled = true;
+    try {
+      var zip = new JSZip(), used = {};
+      for (var i = 0; i < items.length; i++){
+        var it = items[i];
+        if (!it.blob) continue;
+        var nm = it.outName;
+        if (used[nm]){ used[nm]++; nm = it.baseName + '-' + used[it.outName] + '.' + nm.split('.').pop(); }
+        else used[it.outName] = 1;
+        zip.file(nm, it.blob);
+      }
+      setStatus('Zipping…');
+      var blob = await zip.generateAsync({ type: 'blob' });
+      download(blob, 'compressed-images.zip');
+      setStatus('Done — ' + items.length + ' images.');
+    } catch (err){ console.error(err); alert('Failed to build the zip.'); setStatus(''); }
+    finally { zipBtn.disabled = false; }
+  }
+
+  function reset(){
+    items = []; fileInput.value = ''; thumbGrid.innerHTML = ''; totalsEl.textContent = '';
+    controls.style.display = 'none'; dropzone.style.display = 'flex'; setStatus('');
+  }
+
+  fileInput.addEventListener('change', function(e){ if (e.target.files.length) addFiles(e.target.files); });
+  dropzone.addEventListener('click', function(){ fileInput.click(); });
+  zipBtn.addEventListener('click', downloadAll);
+  resetBtn.addEventListener('click', reset);
+  ['dragenter','dragover'].forEach(function(ev){ dropzone.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.add('drag'); }); });
+  ['dragleave','drop'].forEach(function(ev){ dropzone.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.remove('drag'); }); });
+  dropzone.addEventListener('drop', function(e){ if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files); });
+})();
+</script>
+  <script src="nav.js" defer></script>
+</body>
+</html>

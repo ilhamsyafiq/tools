@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>PDF to Text – fique.my</title>
+  <meta name="description" content="Free in-browser PDF text extractor. Pull selectable text out of a PDF — nothing leaves your browser." />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="favicon.ico" />
+  <style>
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+:root { --bg:#f5f7fa; --card-bg:#fff; --radius:12px; --shadow:0 2px 8px rgba(0,0,0,0.06); --text:#1f2d3d; --muted:#6b7280; --border:#e8eaee; --brand:#6366f1; --brand-gradient:linear-gradient(90deg,#6366f1 0%,#a78bfa 100%); }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:"Inter",system-ui,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+.page-title { text-align:center; font-size:1.5rem; font-weight:700; margin:24px 0 8px; }
+.page-subtitle { text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:20px; padding:0 1rem; }
+.wrap { max-width:760px; margin:auto; padding:0 1.25rem 2rem; }
+.card { background:var(--card-bg); padding:1.25rem; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:1.25rem; }
+.badge { display:inline-block; background:#eef2ff; color:var(--brand); font-size:0.7rem; font-weight:600; padding:3px 8px; border-radius:999px; }
+.dropzone { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:200px; border:2px dashed var(--border); border-radius:12px; color:var(--muted); font-size:0.9rem; cursor:pointer; transition:border-color .2s,background .2s; text-align:center; padding:1rem; }
+.dropzone:hover, .dropzone.drag { border-color:var(--brand); background:#eef2ff; }
+.dropzone svg { margin-bottom:12px; opacity:.5; }
+.opt-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+.opt-row label { font-size:0.8rem; color:var(--text); font-weight:500; display:inline-flex; align-items:center; gap:6px; cursor:pointer; }
+input[type=checkbox] { accent-color:var(--brand); width:15px; height:15px; cursor:pointer; }
+.stats { display:flex; gap:18px; flex-wrap:wrap; font-size:0.78rem; color:var(--muted); margin:4px 0 12px; }
+.stats b { color:var(--text); font-weight:600; }
+textarea { width:100%; min-height:340px; resize:vertical; border:1px solid var(--border); border-radius:10px; padding:12px; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:0.82rem; line-height:1.5; color:var(--text); background:#fafafa; }
+textarea:focus { outline:none; border-color:var(--brand); background:#fff; }
+.btn { padding:0.75rem 1.1rem; border-radius:999px; cursor:pointer; border:none; font-size:0.85rem; font-weight:600; transition:all .2s; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+.btn-primary { background:var(--brand-gradient); color:#fff; }
+.btn-primary:hover:not(:disabled) { filter:brightness(1.06); transform:translateY(-1px); box-shadow:0 4px 12px rgba(99,102,241,0.3); }
+.btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+.btn-outline { background:#fff; border:1px solid var(--border); color:#374151; }
+.btn-outline:hover { background:#f9fafb; }
+.actions-bar { display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
+.actions-bar .btn { flex:1; min-width:150px; }
+.status { font-size:0.8rem; color:var(--muted); text-align:center; margin-top:10px; min-height:18px; }
+.hint { font-size:0.72rem; color:var(--muted); margin-top:12px; line-height:1.5; }
+  </style>
+</head>
+<body>
+<h1 class="page-title">PDF to Text <span class="badge">Free</span></h1>
+<p class="page-subtitle">Extract selectable text from a PDF. 100% in your browser, nothing is uploaded.</p>
+
+<div class="wrap">
+  <div class="card">
+    <div class="dropzone" id="dropzone">
+      <svg width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+      <span>Click or drag a PDF here</span>
+      <span style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">One file at a time</span>
+      <input type="file" id="fileInput" accept="application/pdf" style="display:none;" />
+    </div>
+
+    <div id="controls" style="display:none;">
+      <div class="opt-row">
+        <label><input type="checkbox" id="dividerChk" checked /> Show "--- Page N ---" dividers</label>
+      </div>
+
+      <div class="stats" id="stats">
+        <span>Pages: <b id="statPages">0</b></span>
+        <span>Words: <b id="statWords">0</b></span>
+        <span>Characters: <b id="statChars">0</b></span>
+      </div>
+
+      <textarea id="output" spellcheck="false" placeholder="Extracted text will appear here…"></textarea>
+
+      <div class="actions-bar">
+        <button class="btn btn-outline" id="resetBtn">Choose another</button>
+        <button class="btn btn-outline" id="copyBtn">Copy to clipboard</button>
+        <button class="btn btn-primary" id="txtBtn">Download .txt</button>
+      </div>
+      <div class="status" id="status"></div>
+    </div>
+    <div class="hint">Only PDFs with embedded (selectable) text can be extracted. Scanned or image-only PDFs contain no text layer, so nothing will be pulled out — this tool does not perform OCR.</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script>
+(function () {
+  if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+  var fileInput  = document.getElementById('fileInput');
+  var dropzone   = document.getElementById('dropzone');
+  var controls   = document.getElementById('controls');
+  var dividerChk = document.getElementById('dividerChk');
+  var output     = document.getElementById('output');
+  var statPages  = document.getElementById('statPages');
+  var statWords  = document.getElementById('statWords');
+  var statChars  = document.getElementById('statChars');
+  var copyBtn    = document.getElementById('copyBtn');
+  var txtBtn     = document.getElementById('txtBtn');
+  var resetBtn   = document.getElementById('resetBtn');
+  var statusEl   = document.getElementById('status');
+
+  var pdfDoc = null, baseName = 'document', pageTexts = [];
+
+  function setStatus(m){ statusEl.textContent = m || ''; }
+
+  // Extract text for one page, inserting sensible line breaks.
+  async function extractPage(page){
+    var tc = await page.getTextContent();
+    var out = '';
+    var lastY = null;
+    for (var i = 0; i < tc.items.length; i++) {
+      var item = tc.items[i];
+      var y = item.transform ? item.transform[5] : null;
+      // New line when the item carries an explicit EOL, or the vertical
+      // position shifts noticeably from the previous item.
+      if (i > 0 && (item.hasEOL || (lastY !== null && y !== null && Math.abs(y - lastY) > 1))) {
+        out += '\n';
+      } else if (i > 0 && out.length && !/\s$/.test(out)) {
+        out += ' ';
+      }
+      out += item.str;
+      if (item.hasEOL) out += '\n';
+      if (y !== null) lastY = y;
+    }
+    // Collapse runaway blank lines and trailing spaces.
+    return out.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  }
+
+  function rebuild(){
+    var showDiv = dividerChk.checked;
+    var parts = [];
+    for (var i = 0; i < pageTexts.length; i++) {
+      if (showDiv) parts.push('--- Page ' + (i + 1) + ' ---');
+      parts.push(pageTexts[i]);
+    }
+    var text = parts.join('\n\n');
+    output.value = text;
+    updateStats(text);
+  }
+
+  function updateStats(text){
+    statPages.textContent = pageTexts.length;
+    statChars.textContent = text.length;
+    var words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    statWords.textContent = words;
+  }
+
+  async function loadFile(file){
+    if (!file || (file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name))) { alert('Please choose a PDF file.'); return; }
+    if (!window.pdfjsLib) { alert('PDF library failed to load. Check your connection.'); return; }
+    try {
+      baseName = file.name.replace(/\.pdf$/i, '') || 'document';
+      dropzone.style.display = 'none';
+      controls.style.display = 'block';
+      output.value = '';
+      setStatus('Reading PDF…');
+      var bytes = new Uint8Array(await file.arrayBuffer());
+      pdfDoc = await pdfjsLib.getDocument({ data: bytes }).promise;
+      pageTexts = [];
+      for (var i = 1; i <= pdfDoc.numPages; i++) {
+        setStatus('Extracting page ' + i + ' / ' + pdfDoc.numPages + '…');
+        var page = await pdfDoc.getPage(i);
+        pageTexts.push(await extractPage(page));
+      }
+      rebuild();
+      var hasText = pageTexts.some(function(t){ return t.length > 0; });
+      setStatus(hasText ? 'Done — extracted ' + pdfDoc.numPages + ' page(s).'
+                        : 'No embedded text found. This looks like a scanned/image PDF (no OCR).');
+    } catch (err) {
+      console.error(err);
+      alert('Could not read this PDF — it may be corrupted or password-protected.');
+      reset();
+    }
+  }
+
+  function download(blob, name){
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name; a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+  }
+
+  function copyText(){
+    var text = output.value;
+    function done(){ setStatus('Copied to clipboard.'); }
+    function fallback(){ output.select(); try { document.execCommand('copy'); done(); } catch(e){ setStatus('Copy failed — select and copy manually.'); } }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } else { fallback(); }
+  }
+
+  function downloadTxt(){
+    var blob = new Blob([output.value], { type: 'text/plain;charset=utf-8' });
+    download(blob, baseName + '.txt');
+    setStatus('Downloaded ' + baseName + '.txt');
+  }
+
+  function reset(){
+    if (pdfDoc) { try { pdfDoc.destroy(); } catch(e){} }
+    pdfDoc = null; pageTexts = []; fileInput.value = ''; output.value = '';
+    controls.style.display = 'none'; dropzone.style.display = 'flex';
+    updateStats(''); setStatus('');
+  }
+
+  fileInput.addEventListener('change', function(e){ if (e.target.files[0]) loadFile(e.target.files[0]); });
+  dropzone.addEventListener('click', function(){ fileInput.click(); });
+  dividerChk.addEventListener('change', function(){ if (pageTexts.length) rebuild(); });
+  output.addEventListener('input', function(){ updateStats(output.value); });
+  copyBtn.addEventListener('click', copyText);
+  txtBtn.addEventListener('click', downloadTxt);
+  resetBtn.addEventListener('click', reset);
+  ['dragenter','dragover'].forEach(function(ev){ dropzone.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.add('drag'); }); });
+  ['dragleave','drop'].forEach(function(ev){ dropzone.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.remove('drag'); }); });
+  dropzone.addEventListener('drop', function(e){ if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
+})();
+</script>
+  <script src="nav.js" defer></script>
+</body>
+</html>

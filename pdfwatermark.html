@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>PDF Watermark – fique.my</title>
+  <meta name="description" content="Free in-browser PDF watermark and page-number stamper. Add text watermarks and page numbers — nothing leaves your browser." />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="favicon.ico" />
+  <style>
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+:root { --bg:#f5f7fa; --card-bg:#fff; --radius:12px; --shadow:0 2px 8px rgba(0,0,0,0.06); --text:#1f2d3d; --muted:#6b7280; --border:#e8eaee; --brand:#6366f1; --brand-gradient:linear-gradient(90deg,#6366f1 0%,#a78bfa 100%); }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:"Inter",system-ui,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+.page-title { text-align:center; font-size:1.5rem; font-weight:700; margin:24px 0 8px; }
+.page-subtitle { text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:20px; padding:0 1rem; }
+.wrap { max-width:760px; margin:auto; padding:0 1.25rem 2rem; }
+.card { background:var(--card-bg); padding:1.25rem; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:1.25rem; }
+.badge { display:inline-block; background:#eef2ff; color:var(--brand); font-size:0.7rem; font-weight:600; padding:3px 8px; border-radius:999px; }
+.section-title { font-size:0.95rem; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.section-title .badge { font-weight:600; }
+.dropzone { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:200px; border:2px dashed var(--border); border-radius:12px; color:var(--muted); font-size:0.9rem; cursor:pointer; transition:border-color .2s,background .2s; text-align:center; padding:1rem; }
+.dropzone:hover, .dropzone.drag { border-color:var(--brand); background:#eef2ff; }
+.dropzone svg { margin-bottom:12px; opacity:.5; }
+.opt-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+.opt-row label { font-size:0.78rem; color:var(--muted); font-weight:600; }
+.opt-row .grow { flex:1; min-width:120px; }
+.seg { display:flex; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+.seg button { border:none; background:#fff; padding:7px 14px; font-size:0.82rem; cursor:pointer; color:#374151; }
+.seg button.on { background:var(--brand); color:#fff; }
+select, input[type=range] { accent-color:var(--brand); }
+select, input[type=text], input[type=number] { padding:7px 10px; border:1px solid var(--border); border-radius:8px; font-size:0.82rem; font-family:inherit; color:var(--text); }
+input[type=color] { width:38px; height:34px; padding:2px; border:1px solid var(--border); border-radius:8px; background:#fff; cursor:pointer; }
+input[type=range] { flex:1; min-width:120px; }
+.val { font-size:0.78rem; color:var(--brand); font-weight:600; min-width:44px; text-align:right; }
+.check-row { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+.check-row input[type=checkbox] { width:16px; height:16px; accent-color:var(--brand); cursor:pointer; }
+.check-row label { font-size:0.85rem; font-weight:600; color:var(--text); cursor:pointer; }
+.sub-opts { padding-left:4px; border-left:2px solid var(--border); margin-left:2px; }
+.sub-opts.off { opacity:.4; pointer-events:none; }
+.preview-wrap { display:flex; justify-content:center; margin:14px 0; }
+.preview-stage { position:relative; background:#fff; border:1px solid var(--border); border-radius:8px; box-shadow:0 1px 6px rgba(0,0,0,0.08); overflow:hidden; max-width:100%; }
+.preview-stage canvas { display:block; max-width:100%; }
+.wm-overlay { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+.pn-overlay { position:absolute; inset:0; pointer-events:none; }
+.btn { padding:0.75rem 1.1rem; border-radius:999px; cursor:pointer; border:none; font-size:0.85rem; font-weight:600; transition:all .2s; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+.btn-primary { background:var(--brand-gradient); color:#fff; }
+.btn-primary:hover:not(:disabled) { filter:brightness(1.06); transform:translateY(-1px); box-shadow:0 4px 12px rgba(99,102,241,0.3); }
+.btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+.btn-outline { background:#fff; border:1px solid var(--border); color:#374151; }
+.btn-outline:hover { background:#f9fafb; }
+.actions-bar { display:flex; gap:10px; margin-top:8px; flex-wrap:wrap; }
+.actions-bar .btn { flex:1; min-width:150px; }
+.status { font-size:0.8rem; color:var(--muted); text-align:center; margin-top:10px; min-height:18px; }
+.hint { font-size:0.72rem; color:var(--muted); margin-top:12px; line-height:1.5; }
+  </style>
+</head>
+<body>
+<h1 class="page-title">PDF Watermark <span class="badge">Free</span></h1>
+<p class="page-subtitle">Stamp a text watermark and page numbers onto every page. 100% in your browser, nothing is uploaded.</p>
+
+<div class="wrap">
+  <div class="card">
+    <div class="dropzone" id="dropzone">
+      <svg width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Click or drag a PDF here</span>
+      <span style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">One file at a time</span>
+      <input type="file" id="fileInput" accept="application/pdf" style="display:none;" />
+    </div>
+  </div>
+
+  <div id="controls" style="display:none;">
+    <!-- WATERMARK -->
+    <div class="card">
+      <div class="section-title">Watermark <span class="badge">text</span></div>
+      <div class="opt-row">
+        <label>Text</label>
+        <input type="text" id="wmText" class="grow" value="CONFIDENTIAL" placeholder="e.g. CONFIDENTIAL" />
+      </div>
+      <div class="opt-row">
+        <label>Font size</label>
+        <input type="number" id="wmSize" value="48" min="6" max="200" style="width:80px;" />
+        <label style="margin-left:8px;">Color</label>
+        <input type="color" id="wmColor" value="#ff0000" />
+        <label style="margin-left:8px;">Rotation</label>
+        <input type="number" id="wmRot" value="45" min="-180" max="180" style="width:80px;" /><span style="font-size:0.78rem;color:var(--muted);">°</span>
+      </div>
+      <div class="opt-row">
+        <label>Opacity</label>
+        <input type="range" id="wmOpacity" min="0" max="100" value="25" />
+        <span class="val" id="wmOpacityVal">25%</span>
+      </div>
+      <div class="opt-row">
+        <label>Position</label>
+        <div class="seg" id="wmPosSeg">
+          <button data-pos="center" class="on">Center</button>
+          <button data-pos="tiled">Tiled / Repeat</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE NUMBERS -->
+    <div class="card">
+      <div class="check-row">
+        <input type="checkbox" id="pnEnable" />
+        <label for="pnEnable">Add page numbers</label>
+      </div>
+      <div class="sub-opts off" id="pnOpts">
+        <div class="opt-row">
+          <label>Format</label>
+          <select id="pnFormat">
+            <option value="Page {n}">Page {n}</option>
+            <option value="{n} / {total}" selected>{n} / {total}</option>
+            <option value="{n}">{n}</option>
+            <option value="- {n} -">- {n} -</option>
+            <option value="Page {n} of {total}">Page {n} of {total}</option>
+          </select>
+          <label style="margin-left:8px;">Position</label>
+          <div class="seg" id="pnPosSeg">
+            <button data-pos="bc" class="on">Bottom center</button>
+            <button data-pos="br">Bottom right</button>
+          </div>
+        </div>
+        <div class="opt-row">
+          <label>Font size</label>
+          <input type="number" id="pnSize" value="10" min="6" max="72" style="width:80px;" />
+          <label style="margin-left:8px;">Margin</label>
+          <input type="number" id="pnMargin" value="24" min="0" max="200" style="width:80px;" /><span style="font-size:0.78rem;color:var(--muted);">pt</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="card">
+      <div class="section-title">Preview <span class="badge" id="pageCount">page 1</span></div>
+      <div class="preview-wrap">
+        <div class="preview-stage" id="previewStage">
+          <canvas id="previewCanvas"></canvas>
+          <div class="wm-overlay" id="wmOverlay"></div>
+          <div class="pn-overlay" id="pnOverlay"></div>
+        </div>
+      </div>
+      <p class="hint" id="liveDesc"></p>
+      <div class="actions-bar">
+        <button class="btn btn-outline" id="resetBtn">Choose another</button>
+        <button class="btn btn-primary" id="applyBtn">Apply &amp; download PDF</button>
+      </div>
+      <div class="status" id="status"></div>
+    </div>
+    <div class="hint">The watermark and page numbers are drawn straight into the PDF text layer with pdf-lib — the output stays a real, selectable PDF. The preview above is an approximation of the first page.</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+<script>
+(function () {
+  if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+  var $ = function(id){ return document.getElementById(id); };
+  var fileInput = $('fileInput'), dropzone = $('dropzone'), controls = $('controls');
+  var statusEl = $('status'), applyBtn = $('applyBtn'), resetBtn = $('resetBtn');
+  var previewCanvas = $('previewCanvas'), wmOverlay = $('wmOverlay'), pnOverlay = $('pnOverlay');
+  var previewStage = $('previewStage'), liveDesc = $('liveDesc'), pageCount = $('pageCount');
+
+  var pdfBytes = null;      // raw bytes for pdf-lib
+  var pdfDoc = null;        // pdf.js doc for preview
+  var baseName = 'document';
+  var wmPos = 'center', pnPos = 'bc';
+  var previewScale = 1;     // css px per pdf pt on preview
+
+  function setStatus(m){ statusEl.textContent = m || ''; }
+
+  // ---- segmented controls ----
+  function wireSeg(container, cb){
+    container.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click', function(){
+        container.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+        b.classList.add('on'); cb(b.dataset.pos);
+      });
+    });
+  }
+  wireSeg($('wmPosSeg'), function(p){ wmPos = p; renderOverlay(); });
+  wireSeg($('pnPosSeg'), function(p){ pnPos = p; renderOverlay(); });
+
+  // ---- inputs that trigger a re-render of the overlay ----
+  ['wmText','wmSize','wmColor','wmRot','wmOpacity','pnFormat','pnSize','pnMargin']
+    .forEach(function(id){ $(id).addEventListener('input', renderOverlay); });
+
+  $('wmOpacity').addEventListener('input', function(){ $('wmOpacityVal').textContent = $('wmOpacity').value + '%'; });
+
+  $('pnEnable').addEventListener('change', function(){
+    $('pnOpts').classList.toggle('off', !this.checked);
+    renderOverlay();
+  });
+
+  function hexToRgb01(hex){
+    var m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex || '#000000');
+    if (!m) return { r:0, g:0, b:0 };
+    return { r: parseInt(m[1],16)/255, g: parseInt(m[2],16)/255, b: parseInt(m[3],16)/255 };
+  }
+
+  function formatPageNum(tpl, n, total){
+    return String(tpl).replace(/\{n\}/g, n).replace(/\{total\}/g, total);
+  }
+
+  // ---- load ----
+  async function loadFile(file){
+    if (!file || (file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name))) { alert('Please choose a PDF file.'); return; }
+    if (!window.pdfjsLib) { alert('Preview library failed to load. Check your connection.'); return; }
+    try {
+      baseName = file.name.replace(/\.pdf$/i,'') || 'document';
+      pdfBytes = new Uint8Array(await file.arrayBuffer());
+      pdfDoc = await pdfjsLib.getDocument({ data: pdfBytes.slice() }).promise;
+      dropzone.parentElement.style.display = 'none';
+      controls.style.display = 'block';
+      pageCount.textContent = pdfDoc.numPages + (pdfDoc.numPages === 1 ? ' page' : ' pages');
+      await renderPreviewPage();
+    } catch (err) { console.error(err); alert('Could not read this PDF — it may be corrupted or password-protected.'); }
+  }
+
+  async function renderPreviewPage(){
+    var page = await pdfDoc.getPage(1);
+    var vpFull = page.getViewport({ scale: 1 });
+    // target ~ 420px wide preview
+    var target = Math.min(420, vpFull.width);
+    previewScale = target / vpFull.width;
+    var vp = page.getViewport({ scale: previewScale });
+    previewCanvas.width = Math.ceil(vp.width);
+    previewCanvas.height = Math.ceil(vp.height);
+    previewStage.style.width = previewCanvas.width + 'px';
+    var ctx = previewCanvas.getContext('2d');
+    ctx.fillStyle = '#fff'; ctx.fillRect(0,0,previewCanvas.width,previewCanvas.height);
+    await page.render({ canvasContext: ctx, viewport: vp }).promise;
+    renderOverlay();
+  }
+
+  // ---- overlay preview (CSS approximation) ----
+  function renderOverlay(){
+    if (!pdfDoc) return;
+    wmOverlay.innerHTML = '';
+    pnOverlay.innerHTML = '';
+    var W = previewCanvas.width, H = previewCanvas.height;
+
+    var text = $('wmText').value || '';
+    var size = parseFloat($('wmSize').value) || 48;
+    var rot = parseFloat($('wmRot').value) || 0;
+    var op = (parseFloat($('wmOpacity').value) || 0) / 100;
+    var color = $('wmColor').value;
+    var pxSize = size * previewScale;
+
+    function makeWM(x, y){
+      var s = document.createElement('div');
+      s.textContent = text;
+      s.style.position = 'absolute';
+      s.style.left = x + 'px';
+      s.style.top = y + 'px';
+      s.style.transform = 'translate(-50%,-50%) rotate(' + (-rot) + 'deg)';
+      s.style.transformOrigin = 'center center';
+      s.style.fontFamily = 'Helvetica, Arial, sans-serif';
+      s.style.fontWeight = '700';
+      s.style.fontSize = pxSize + 'px';
+      s.style.color = color;
+      s.style.opacity = op;
+      s.style.whiteSpace = 'nowrap';
+      s.style.lineHeight = '1';
+      wmOverlay.appendChild(s);
+    }
+
+    if (text) {
+      if (wmPos === 'center') {
+        makeWM(W/2, H/2);
+      } else {
+        // tiled: spacing based roughly on text size
+        var stepX = Math.max(pxSize * 4, 90);
+        var stepY = Math.max(pxSize * 3, 70);
+        for (var y = stepY/2; y < H + stepY; y += stepY) {
+          for (var x = stepX/2; x < W + stepX; x += stepX) {
+            makeWM(x, y);
+          }
+        }
+      }
+    }
+
+    // page numbers
+    if ($('pnEnable').checked) {
+      var tpl = $('pnFormat').value;
+      var pnSize = parseFloat($('pnSize').value) || 10;
+      var margin = parseFloat($('pnMargin').value) || 0;
+      var pnPx = pnSize * previewScale;
+      var mPx = margin * previewScale;
+      var d = document.createElement('div');
+      d.textContent = formatPageNum(tpl, 1, pdfDoc.numPages);
+      d.style.position = 'absolute';
+      d.style.bottom = mPx + 'px';
+      d.style.fontFamily = 'Helvetica, Arial, sans-serif';
+      d.style.fontSize = pnPx + 'px';
+      d.style.color = '#1f2d3d';
+      d.style.lineHeight = '1';
+      if (pnPos === 'bc') { d.style.left = '50%'; d.style.transform = 'translateX(-50%)'; }
+      else { d.style.right = mPx + 'px'; }
+      pnOverlay.appendChild(d);
+    }
+
+    updateLiveDesc();
+  }
+
+  function updateLiveDesc(){
+    var parts = [];
+    var text = $('wmText').value;
+    if (text) {
+      parts.push('Watermark "' + text + '" at ' + ($('wmSize').value) + 'pt, ' +
+        ($('wmOpacity').value) + '% opacity, rotated ' + ($('wmRot').value) + '°, ' +
+        (wmPos === 'center' ? 'centered' : 'tiled across the page') + '.');
+    }
+    if ($('pnEnable').checked) {
+      parts.push('Page numbers "' + formatPageNum($('pnFormat').value, 'n', pdfDoc ? pdfDoc.numPages : 'total') +
+        '" at the ' + (pnPos === 'bc' ? 'bottom center' : 'bottom right') + '.');
+    }
+    if (!parts.length) parts.push('No watermark text and page numbers disabled — nothing will be stamped.');
+    liveDesc.textContent = 'Applied to all ' + (pdfDoc ? pdfDoc.numPages : '') + ' page(s): ' + parts.join(' ');
+  }
+
+  // ---- apply with pdf-lib ----
+  async function apply(){
+    if (!pdfBytes || !window.PDFLib) { alert('PDF library not loaded.'); return; }
+    applyBtn.disabled = true;
+    setStatus('Stamping pages…');
+    try {
+      var PDFLib = window.PDFLib;
+      var degrees = PDFLib.degrees, rgb = PDFLib.rgb, StandardFonts = PDFLib.StandardFonts;
+      var doc = await PDFLib.PDFDocument.load(pdfBytes.slice());
+      var font = await doc.embedFont(StandardFonts.Helvetica);
+
+      var text = $('wmText').value || '';
+      var size = parseFloat($('wmSize').value) || 48;
+      var rot = parseFloat($('wmRot').value) || 0;
+      var op = Math.max(0, Math.min(1, (parseFloat($('wmOpacity').value) || 0) / 100));
+      var c = hexToRgb01($('wmColor').value);
+      var wmColor = rgb(c.r, c.g, c.b);
+
+      var pnOn = $('pnEnable').checked;
+      var pnTpl = $('pnFormat').value;
+      var pnSize = parseFloat($('pnSize').value) || 10;
+      var pnMargin = parseFloat($('pnMargin').value) || 0;
+      var pnColor = rgb(0.12, 0.18, 0.24);
+
+      var pages = doc.getPages();
+      var total = pages.length;
+      var rad = rot * Math.PI / 180;
+      var textWidth = text ? font.widthOfTextAtSize(text, size) : 0;
+      var textHeight = size; // approx cap/line height
+
+      pages.forEach(function(page, idx){
+        var w = page.getWidth(), h = page.getHeight();
+
+        if (text) {
+          if (wmPos === 'center') {
+            // center the rotated text about the page center
+            var cx = w/2, cy = h/2;
+            var dx = (textWidth/2) * Math.cos(rad) - (textHeight/2) * Math.sin(rad);
+            var dy = (textWidth/2) * Math.sin(rad) + (textHeight/2) * Math.cos(rad);
+            page.drawText(text, {
+              x: cx - dx, y: cy - dy,
+              size: size, font: font, color: wmColor, opacity: op,
+              rotate: degrees(rot)
+            });
+          } else {
+            // tiled: step across the page. Spacing scales with text size.
+            var stepX = Math.max(textWidth + size * 2, size * 3);
+            var stepY = Math.max(size * 4, 60);
+            for (var y = 0; y < h + stepY; y += stepY) {
+              for (var x = 0; x < w + stepX; x += stepX) {
+                page.drawText(text, {
+                  x: x - stepX/2, y: y,
+                  size: size, font: font, color: wmColor, opacity: op,
+                  rotate: degrees(rot)
+                });
+              }
+            }
+          }
+        }
+
+        if (pnOn) {
+          var label = formatPageNum(pnTpl, idx + 1, total);
+          var lw = font.widthOfTextAtSize(label, pnSize);
+          var px = (pnPos === 'bc') ? (w - lw) / 2 : (w - pnMargin - lw);
+          page.drawText(label, {
+            x: px, y: pnMargin,
+            size: pnSize, font: font, color: pnColor, opacity: 1
+          });
+        }
+      });
+
+      var out = await doc.save();
+      var blob = new Blob([out], { type: 'application/pdf' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = baseName + '-watermarked.pdf';
+      a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+      setStatus('Done — ' + total + ' page(s) stamped.');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to stamp the PDF: ' + (err && err.message ? err.message : err));
+      setStatus('');
+    } finally {
+      applyBtn.disabled = false;
+    }
+  }
+
+  function reset(){
+    if (pdfDoc) { try { pdfDoc.destroy(); } catch(e){} }
+    pdfDoc = null; pdfBytes = null; fileInput.value = '';
+    controls.style.display = 'none';
+    dropzone.parentElement.style.display = 'block';
+    setStatus('');
+  }
+
+  // ---- events ----
+  fileInput.addEventListener('change', function(e){ if (e.target.files[0]) loadFile(e.target.files[0]); });
+  dropzone.addEventListener('click', function(){ fileInput.click(); });
+  applyBtn.addEventListener('click', apply);
+  resetBtn.addEventListener('click', reset);
+  ['dragenter','dragover'].forEach(function(ev){ dropzone.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.add('drag'); }); });
+  ['dragleave','drop'].forEach(function(ev){ dropzone.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.remove('drag'); }); });
+  dropzone.addEventListener('drop', function(e){ if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
+})();
+</script>
+  <script src="nav.js" defer></script>
+</body>
+</html>

@@ -31,10 +31,12 @@
     + '.site-footer b{color:#6366f1;font-weight:600;}'
     + '@media(max-width:768px){.site-header-inner{height:auto;padding:10px 1rem;}.site-nav{font-size:.8rem;gap:.6rem;}}';
 
-  var PDF = ['pdfsign.html', 'pdfmerge.html', 'pdfsplit.html', 'pdf2img.html', 'img2pdf.html'];
-  var IMG = ['bgremover.html', 'imgconvert.html'];
+  var PDF = ['pdfsign.html', 'pdfeditor.html', 'pdfmerge.html', 'pdfsplit.html', 'pdforganize.html', 'pdfcompress.html', 'pdfwatermark.html', 'pdf2img.html', 'img2pdf.html', 'pdf2text.html'];
+  var IMG = ['bgremover.html', 'imgconvert.html', 'imgcompress.html', 'imgresize.html'];
+  var TOOL = ['invoice.html', 'qrcode.html', 'texttools.html'];
   var pdfActive = PDF.indexOf(path) >= 0 ? ' active' : '';
   var imgActive = IMG.indexOf(path) >= 0 ? ' active' : '';
+  var toolActive = TOOL.indexOf(path) >= 0 ? ' active' : '';
 
   function top(href, label) {
     return '<a class="site-navlink' + (path === href ? ' active' : '') + '" href="' + href + '">' + label + '</a>';
@@ -53,15 +55,28 @@
     + '<div class="site-drop"><button type="button" class="site-dropbtn' + pdfActive + '">PDF ▾</button>'
     + '<div class="site-dropmenu">'
     + item('pdfsign.html', 'PDF Sign')
+    + item('pdfeditor.html', 'PDF Editor')
     + item('pdfmerge.html', 'PDF Merge')
     + item('pdfsplit.html', 'PDF Split')
+    + item('pdforganize.html', 'PDF Organize')
+    + item('pdfcompress.html', 'PDF Compress')
+    + item('pdfwatermark.html', 'PDF Watermark')
     + item('pdf2img.html', 'PDF → Image')
     + item('img2pdf.html', 'Image → PDF')
+    + item('pdf2text.html', 'PDF → Text')
     + '</div></div>'
     + '<div class="site-drop"><button type="button" class="site-dropbtn' + imgActive + '">Image ▾</button>'
     + '<div class="site-dropmenu">'
     + item('bgremover.html', 'Background Remover')
     + item('imgconvert.html', 'Image Converter')
+    + item('imgcompress.html', 'Image Compress')
+    + item('imgresize.html', 'Resize & Crop')
+    + '</div></div>'
+    + '<div class="site-drop"><button type="button" class="site-dropbtn' + toolActive + '">Tools ▾</button>'
+    + '<div class="site-dropmenu">'
+    + item('invoice.html', 'Invoice / Quotation')
+    + item('qrcode.html', 'QR Code')
+    + item('texttools.html', 'Text Tools')
     + '</div></div>'
     + '</nav></div></header>';
 
