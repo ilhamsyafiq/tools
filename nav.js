@@ -49,6 +49,22 @@
     + '.site-footer a:hover{color:#6366f1;}'
     + '.site-footer .made{margin-top:8px;}'
     + '.site-footer b{color:#6366f1;font-weight:600;}'
+    // breadcrumb
+    + '.site-breadcrumb{max-width:1160px;margin:0 auto;padding:16px 1rem 0;font-size:.8rem;color:#6b7280;font-family:"Inter",system-ui,sans-serif;display:flex;flex-wrap:wrap;align-items:center;gap:2px;}'
+    + '.site-breadcrumb a{color:#6b7280;text-decoration:none;}'
+    + '.site-breadcrumb a:hover{color:#6366f1;}'
+    + '.site-breadcrumb .sep{margin:0 6px;color:#cbd5e1;}'
+    + '.site-breadcrumb .cur{color:#1f2d3d;font-weight:600;}'
+    // related tools
+    + '.site-related{max-width:1160px;margin:2.75rem auto 0;padding:0 1rem;font-family:"Inter",system-ui,sans-serif;}'
+    + '.site-related h2{font-size:1.15rem;font-weight:700;color:#1f2d3d;margin:0 0 14px;}'
+    + '.site-related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:14px;}'
+    + '.site-rc{display:flex;flex-direction:column;gap:6px;background:#fff;border:1px solid #e8eaee;border-radius:12px;padding:16px;text-decoration:none;color:#1f2d3d;box-shadow:0 2px 8px rgba(31,45,61,.05);transition:transform .16s,box-shadow .16s,border-color .16s;}'
+    + '.site-rc:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(31,45,61,.10);border-color:#c7d2fe;}'
+    + '.site-rc .em{font-size:1.35rem;}'
+    + '.site-rc b{font-size:.92rem;font-weight:700;}'
+    + '.site-rc small{font-size:.78rem;color:#6b7280;line-height:1.45;}'
+    + '@media(max-width:600px){.site-related-grid{grid-template-columns:1fr 1fr;}}'
     // mobile
     + '@media(max-width:860px){'
     + '.site-burger{display:inline-flex;}'
@@ -127,6 +143,78 @@
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
+  // Shared, single-fetch loader for the tool registry (used by breadcrumb,
+  // related tools and search).
+  var _toolsPromise = null;
+  function loadTools() {
+    if (!_toolsPromise) {
+      _toolsPromise = fetch('data/tools.json')
+        .then(function (r) { return r.ok ? r.json() : []; })
+        .then(function (d) { return Array.isArray(d) ? d : []; })
+        .catch(function () { return []; });
+    }
+    return _toolsPromise;
+  }
+
+  function slug(p) { return String(p || '').replace(/^\//, '').toLowerCase(); }
+
+  // Inject breadcrumb (Home > Category > Tool) + a "Related tools" grid, plus
+  // BreadcrumbList structured data — only on real tool pages found in the
+  // registry. index.html / 404 / unknown pages are skipped.
+  function buildChrome(tools) {
+    var byPath = {};
+    tools.forEach(function (t) { byPath[slug(t.path)] = t; });
+    var current = byPath[path];
+    if (!current) return;
+
+    var headerEl = document.querySelector('.site-header');
+    var footerEl = document.querySelector('.site-footer');
+
+    // --- Breadcrumb ---
+    var crumbHtml = '<nav class="site-breadcrumb" aria-label="Breadcrumb">'
+      + '<a href="index.html">Home</a>'
+      + '<span class="sep">/</span>'
+      + '<span>' + esc(current.category || 'Tools') + '</span>'
+      + '<span class="sep">/</span>'
+      + '<span class="cur" aria-current="page">' + esc(current.name) + '</span>'
+      + '</nav>';
+    if (headerEl) headerEl.insertAdjacentHTML('afterend', crumbHtml);
+
+    // --- Related tools ---
+    var related = (current.related || [])
+      .map(function (p) { return byPath[slug(p)]; })
+      .filter(function (t) { return t && slug(t.path) !== path; })
+      .slice(0, 4);
+    if (related.length && footerEl) {
+      var cards = related.map(function (t) {
+        return '<a class="site-rc" href="' + esc(slug(t.path)) + '">'
+          + '<span class="em">' + esc(t.icon || '🔧') + '</span>'
+          + '<b>' + esc(t.name) + '</b>'
+          + '<small>' + esc(t.description || '') + '</small></a>';
+      }).join('');
+      var relHtml = '<section class="site-related" aria-label="Related tools">'
+        + '<h2>Related tools</h2>'
+        + '<div class="site-related-grid">' + cards + '</div></section>';
+      footerEl.insertAdjacentHTML('beforebegin', relHtml);
+    }
+
+    // --- BreadcrumbList JSON-LD ---
+    var origin = 'https://fique.my/';
+    var items = [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: origin },
+      { '@type': 'ListItem', position: 2, name: current.category || 'Tools' },
+      { '@type': 'ListItem', position: 3, name: current.name, item: origin + slug(current.path) }
+    ];
+    var ld = document.createElement('script');
+    ld.type = 'application/ld+json';
+    ld.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: items
+    });
+    document.head.appendChild(ld);
+  }
+
   function mount() {
     var style = document.createElement('style');
     style.textContent = css;
@@ -163,6 +251,9 @@
     });
 
     setupSearch();
+
+    // Breadcrumb + related tools (tool pages only), from the shared registry.
+    loadTools().then(buildChrome);
   }
 
   // Site-wide search powered by data/tools.json.
@@ -170,14 +261,11 @@
     var input = document.getElementById('site-search-input');
     var out = document.getElementById('site-search-out');
     if (!input || !out) return;
-    var TOOLS = [], loaded = false;
+    var TOOLS = [];
 
     input.addEventListener('focus', load);
     function load() {
-      if (loaded) return; loaded = true;
-      fetch('data/tools.json').then(function (r) { return r.ok ? r.json() : []; })
-        .then(function (d) { TOOLS = Array.isArray(d) ? d : []; })
-        .catch(function () { TOOLS = []; });
+      loadTools().then(function (d) { TOOLS = d; });
     }
 
     function score(t, q) {
