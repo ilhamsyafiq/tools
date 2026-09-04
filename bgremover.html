@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Background Remover – CopOnline.my</title>
+  <meta name="description" content="Free in-browser background remover. Make white backgrounds transparent — nothing leaves your browser." />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="favicon.ico" />
+  <style>
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --bg: #f5f7fa;
+  --card-bg: #ffffff;
+  --radius: 12px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --text: #1f2d3d;
+  --muted: #6b7280;
+  --border: #e8eaee;
+  --brand: #6366f1;
+  --brand-gradient: linear-gradient(90deg, #6366f1 0%, #a78bfa 100%);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Inter", system-ui, sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+
+/* HEADER */
+.header { background:#fff; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:200; box-shadow:0 2px 14px rgba(31,45,61,0.04); }
+.header-inner { max-width:1160px; margin:0 auto; padding:0 1rem; display:flex; align-items:center; height:64px; gap:1rem; }
+.logo { display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text); font-weight:600; font-size:1.05rem; flex-shrink:0; }
+.tagline { font-size:0.6rem; color:var(--muted); }
+.nav { display:flex; gap:1rem; align-items:center; margin-left:auto; font-size:0.85rem; flex-wrap:wrap; }
+.nav a { text-decoration:none; color:#374151; font-weight:500; padding:6px 4px; transition:color .2s; }
+.nav a:hover, .nav a.active { color:var(--brand); font-weight:600; }
+.dropdown { position:relative; }
+.dropbtn { background:none; border:none; font:inherit; color:#374151; font-weight:500; cursor:pointer; padding:6px 4px; display:inline-flex; align-items:center; gap:3px; }
+.dropdown:hover .dropbtn, .dropbtn.active { color:var(--brand); font-weight:600; }
+.dropdown-menu { position:absolute; top:calc(100% + 4px); left:0; background:#fff; border:1px solid var(--border); border-radius:10px; box-shadow:0 8px 24px rgba(31,45,61,0.12); min-width:150px; padding:6px; display:none; flex-direction:column; z-index:300; }
+.dropdown:hover .dropdown-menu, .dropdown:focus-within .dropdown-menu { display:flex; }
+.dropdown-menu a { padding:8px 10px; border-radius:6px; font-size:0.85rem; margin:0; white-space:nowrap; }
+.dropdown-menu a:hover { background:#eef2ff; color:var(--brand); }
+
+/* LAYOUT */
+.page-title { text-align:center; font-size:1.5rem; font-weight:700; margin:24px 0 8px; }
+.page-subtitle { text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:20px; padding:0 1rem; }
+.main { display:grid; grid-template-columns:1fr 300px; gap:1.25rem; padding:0 1.25rem 2rem; max-width:1180px; margin:auto; }
+@media (max-width:860px){ .main { grid-template-columns:1fr; } }
+.card { background:var(--card-bg); padding:1.25rem; border-radius:var(--radius); box-shadow:var(--shadow); }
+
+/* DROP ZONE */
+.dropzone { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:340px; border:2px dashed var(--border); border-radius:12px; color:var(--muted); font-size:0.9rem; cursor:pointer; transition:border-color .2s, background .2s; text-align:center; padding:1rem; }
+.dropzone:hover, .dropzone.drag { border-color:var(--brand); background:#eef2ff; }
+.dropzone svg { margin-bottom:12px; opacity:.5; }
+
+/* PREVIEW */
+.preview-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+@media (max-width:560px){ .preview-grid { grid-template-columns:1fr; } }
+.preview-box { border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+.preview-box .cap { font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); padding:8px 10px; border-bottom:1px solid var(--border); background:#fafafa; }
+.preview-box .imgwrap { display:flex; align-items:center; justify-content:center; min-height:240px; padding:12px; }
+.preview-box img { max-width:100%; max-height:320px; display:block; }
+/* transparency checkerboard */
+.checker { background-image:
+    linear-gradient(45deg,#e5e7eb 25%,transparent 25%),
+    linear-gradient(-45deg,#e5e7eb 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,#e5e7eb 75%),
+    linear-gradient(-45deg,transparent 75%,#e5e7eb 75%);
+  background-size:18px 18px;
+  background-position:0 0,0 9px,9px -9px,-9px 0; }
+
+/* SIDEBAR CONTROLS */
+.section { margin-bottom:1.25rem; }
+.section-title { font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:.8px; color:var(--muted); margin-bottom:8px; }
+.slider-row { display:flex; align-items:center; gap:8px; margin-top:6px; }
+.slider-row input[type=range] { flex:1; accent-color:var(--brand); }
+.slider-row .val { font-size:0.75rem; color:var(--muted); min-width:38px; text-align:right; }
+label.file-label { display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 14px; background:#f9fafb; border:1px dashed var(--border); border-radius:8px; cursor:pointer; font-size:0.82rem; color:#374151; transition:border-color .2s, background .2s; }
+label.file-label:hover { border-color:var(--brand); background:#eef2ff; }
+label.file-label input { display:none; }
+.check-row { display:flex; align-items:center; gap:8px; font-size:0.82rem; color:#374151; cursor:pointer; margin-top:10px; }
+.check-row input { accent-color:var(--brand); }
+
+/* BUTTONS */
+.btn { padding:0.7rem 1.1rem; border-radius:999px; cursor:pointer; border:none; font-size:0.85rem; font-weight:600; transition:all .2s; display:inline-flex; align-items:center; justify-content:center; gap:6px; width:100%; }
+.btn-primary { background:var(--brand-gradient); color:#fff; }
+.btn-primary:hover { filter:brightness(1.06); transform:translateY(-1px); box-shadow:0 4px 12px rgba(99,102,241,0.3); }
+.btn-primary:disabled { opacity:.5; cursor:not-allowed; transform:none; box-shadow:none; }
+.btn-outline { background:#fff; border:1px solid var(--border); color:#374151; margin-top:8px; }
+.btn-outline:hover { background:#f9fafb; }
+.hint { font-size:0.72rem; color:var(--muted); margin-top:10px; line-height:1.5; }
+.badge { display:inline-block; background:#eef2ff; color:var(--brand); font-size:0.7rem; font-weight:600; padding:3px 8px; border-radius:999px; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<h1 class="page-title">Background Remover <span class="badge">Free</span></h1>
+<p class="page-subtitle">Upload a chop, signature, or logo photo and make the white background transparent — 100% in your browser, nothing is uploaded to any server.</p>
+
+<div class="main">
+  <!-- LEFT: WORKSPACE -->
+  <div class="card">
+    <!-- Drop zone (shown before an image is loaded) -->
+    <div class="dropzone" id="dropzone">
+      <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+      <span>Click or drag an image here</span>
+      <span style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">PNG or JPG — best results with a plain white background</span>
+    </div>
+
+    <!-- Preview (shown after load) -->
+    <div class="preview-grid" id="previewGrid" style="display:none;">
+      <div class="preview-box">
+        <div class="cap">Original</div>
+        <div class="imgwrap"><img id="origImg" alt="Original" /></div>
+      </div>
+      <div class="preview-box">
+        <div class="cap">Result (transparent)</div>
+        <div class="imgwrap checker"><img id="resultImg" alt="Result" /></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: CONTROLS -->
+  <div class="card">
+    <div class="section">
+      <div class="section-title">1. Choose image</div>
+      <label class="file-label">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg>
+        <span id="fileName">Upload image...</span>
+        <input type="file" id="fileInput" accept="image/*" />
+      </label>
+    </div>
+
+    <div class="section">
+      <div class="section-title">2. Sensitivity</div>
+      <div class="slider-row">
+        <span style="font-size:0.75rem;color:var(--muted);">Amount</span>
+        <input type="range" id="threshold" min="180" max="254" value="245" />
+        <span class="val" id="thresholdVal">245</span>
+      </div>
+      <label class="check-row">
+        <input type="checkbox" id="feather" checked />
+        Soften edges (anti-alias)
+      </label>
+      <div class="hint">Lower the amount if bits of the background remain. Raise it if parts of your chop/signature are disappearing.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">3. Download</div>
+      <button class="btn btn-primary" id="downloadBtn" disabled>Download PNG</button>
+      <button class="btn btn-outline" id="resetBtn">Choose another image</button>
+    </div>
+
+    <div class="hint">Tip: use the result directly in the <a href="pdfsign.html" style="color:var(--brand);font-weight:600;text-decoration:none;">PDF Sign + Chop</a> tool.</div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var fileInput   = document.getElementById('fileInput');
+  var dropzone    = document.getElementById('dropzone');
+  var previewGrid = document.getElementById('previewGrid');
+  var origImg     = document.getElementById('origImg');
+  var resultImg   = document.getElementById('resultImg');
+  var thresholdEl = document.getElementById('threshold');
+  var thresholdVal= document.getElementById('thresholdVal');
+  var featherEl   = document.getElementById('feather');
+  var downloadBtn = document.getElementById('downloadBtn');
+  var resetBtn    = document.getElementById('resetBtn');
+  var fileName    = document.getElementById('fileName');
+
+  var sourceImage = null;   // loaded HTMLImageElement
+  var resultUrl   = null;   // processed PNG data URL
+
+  function process() {
+    if (!sourceImage) return;
+    var upper = parseInt(thresholdEl.value, 10);              // min-channel >= this -> fully transparent (white)
+    // feather = width of the soft transition below the threshold
+    var feather = featherEl.checked ? 30 : 4;
+    var lower = Math.max(0, upper - feather);                 // <= this -> fully kept (ink)
+
+    var canvas = document.createElement('canvas');
+    canvas.width  = sourceImage.naturalWidth  || sourceImage.width;
+    canvas.height = sourceImage.naturalHeight || sourceImage.height;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(sourceImage, 0, 0);
+
+    var imgData;
+    try {
+      imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    } catch (err) {
+      alert('Could not read this image (browser security). Try a different file.');
+      return;
+    }
+    var d = imgData.data;
+    for (var i = 0; i < d.length; i += 4) {
+      var r = d[i], g = d[i + 1], b = d[i + 2];
+      var m = Math.min(r, g, b);                              // "whiteness" — high for white/light pixels
+
+      // 1) Alpha from whiteness, with a soft feathered edge
+      var af;                                                 // alpha factor 0..1
+      if (m >= upper)      af = 0;
+      else if (m <= lower) af = 1;
+      else                 af = (upper - m) / (upper - lower);
+
+      // 2) Spill decontamination: edge pixels are ink blended over white.
+      //    Un-blend the white out so no bright halo/fringe remains -> clean cut.
+      if (af > 0 && af < 1) {
+        d[i]     = clamp8((r - 255 * (1 - af)) / af);
+        d[i + 1] = clamp8((g - 255 * (1 - af)) / af);
+        d[i + 2] = clamp8((b - 255 * (1 - af)) / af);
+      }
+
+      d[i + 3] = Math.round(d[i + 3] * af);                   // respect any existing transparency
+    }
+    ctx.putImageData(imgData, 0, 0);
+    resultUrl = canvas.toDataURL('image/png');
+    resultImg.src = resultUrl;
+    downloadBtn.disabled = false;
+  }
+
+  function clamp8(v) { return v < 0 ? 0 : v > 255 ? 255 : v; }
+
+  function loadFile(file) {
+    if (!file || !file.type.startsWith('image/')) {
+      alert('Please choose an image file.');
+      return;
+    }
+    fileName.textContent = file.name;
+    var url = URL.createObjectURL(file);
+    var img = new Image();
+    img.onload = function () {
+      sourceImage = img;
+      origImg.src = url;
+      dropzone.style.display = 'none';
+      previewGrid.style.display = 'grid';
+      process();
+    };
+    img.onerror = function () { alert('Failed to load image.'); };
+    img.src = url;
+  }
+
+  // File input
+  fileInput.addEventListener('change', function (e) {
+    if (e.target.files[0]) loadFile(e.target.files[0]);
+  });
+
+  // Drop zone
+  dropzone.addEventListener('click', function () { fileInput.click(); });
+  ['dragenter', 'dragover'].forEach(function (ev) {
+    dropzone.addEventListener(ev, function (e) { e.preventDefault(); dropzone.classList.add('drag'); });
+  });
+  ['dragleave', 'drop'].forEach(function (ev) {
+    dropzone.addEventListener(ev, function (e) { e.preventDefault(); dropzone.classList.remove('drag'); });
+  });
+  dropzone.addEventListener('drop', function (e) {
+    if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
+  });
+
+  // Controls
+  thresholdEl.addEventListener('input', function () {
+    thresholdVal.textContent = thresholdEl.value;
+    process();
+  });
+  featherEl.addEventListener('change', process);
+
+  // Download
+  downloadBtn.addEventListener('click', function () {
+    if (!resultUrl) return;
+    var a = document.createElement('a');
+    a.href = resultUrl;
+    a.download = 'no-background.png';
+    a.click();
+  });
+
+  // Reset
+  resetBtn.addEventListener('click', function () {
+    sourceImage = null; resultUrl = null;
+    fileInput.value = '';
+    fileName.textContent = 'Upload image...';
+    previewGrid.style.display = 'none';
+    dropzone.style.display = 'flex';
+    downloadBtn.disabled = true;
+  });
+})();
+</script>
+  <script src="nav.js" defer></script>
+</body>
+</html>

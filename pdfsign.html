@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Signature + Chop PDF – CopOnline.my</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="favicon.ico" />
+  <style>
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Great+Vibes&family=Alex+Brush&display=swap");
+
+:root {
+  --bg: #f5f7fa;
+  --card-bg: #ffffff;
+  --radius: 12px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --text: #1f2d3d;
+  --muted: #6b7280;
+  --border: #e8eaee;
+  --brand: #6366f1;
+  --brand-gradient: linear-gradient(90deg, #6366f1 0%, #a78bfa 100%);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* HEADER */
+.header {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 14px rgba(31,45,61,0.04);
+}
+.header-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  height: 64px;
+  gap: 1rem;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 1.05rem;
+  flex-shrink: 0;
+}
+.tagline { font-size: 0.6rem; color: var(--muted); }
+.nav { display: flex; gap: 1rem; align-items: center; margin-left: auto; font-size: 0.85rem; flex-wrap: wrap; }
+.nav a { text-decoration: none; color: #374151; font-weight: 500; padding: 6px 4px; transition: color .2s; }
+.nav a:hover, .nav a.active { color: var(--brand); font-weight: 600; }
+.divider { width: 1px; height: 24px; background: #d1d5db; margin: 0 8px; }
+.dropdown { position:relative; }
+.dropbtn { background:none; border:none; font:inherit; color:#374151; font-weight:500; cursor:pointer; padding:6px 4px; display:inline-flex; align-items:center; gap:3px; }
+.dropdown:hover .dropbtn, .dropbtn.active { color:var(--brand); font-weight:600; }
+.dropdown-menu { position:absolute; top:calc(100% + 4px); left:0; background:#fff; border:1px solid var(--border); border-radius:10px; box-shadow:0 8px 24px rgba(31,45,61,0.12); min-width:150px; padding:6px; display:none; flex-direction:column; z-index:300; }
+.dropdown:hover .dropdown-menu, .dropdown:focus-within .dropdown-menu { display:flex; }
+.dropdown-menu a { padding:8px 10px; border-radius:6px; font-size:0.85rem; margin:0; white-space:nowrap; }
+.dropdown-menu a:hover { background:#eef2ff; color:var(--brand); }
+
+/* LAYOUT */
+.page-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 24px 0 8px;
+}
+.page-subtitle {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.main {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.25rem;
+  padding: 0 1.25rem 2rem;
+  max-width: 1280px;
+  margin: auto;
+}
+
+.card {
+  background: var(--card-bg);
+  padding: 1.25rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.sidebar {
+  position: sticky;
+  top: 80px;
+  height: fit-content;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+/* PDF VIEWER */
+.pdf-container { display: flex; flex-direction: column; align-items: center; min-height: 300px; }
+.pdf-placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 400px; border: 2px dashed var(--border); border-radius: 12px;
+  color: var(--muted); font-size: 0.9rem; width: 100%; cursor: pointer; transition: border-color .2s;
+}
+.pdf-placeholder:hover { border-color: var(--brand); }
+.pdf-placeholder svg { margin-bottom: 12px; opacity: 0.5; }
+
+.page-wrap {
+  position: relative;
+  margin: 0.75rem 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  background: #fff;
+  border-radius: 6px;
+  overflow: visible;
+}
+.page-wrap canvas { display: block; }
+.page-footer { text-align: center; font-size: 11px; color: var(--muted); margin-top: 4px; }
+.active-page { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 6px; }
+
+/* OVERLAYS */
+.overlay {
+  position: absolute;
+  cursor: move;
+  display: inline-block;
+  z-index: 10;
+  user-select: none;
+}
+.overlay img { display: block; width: 140px; height: auto; pointer-events: none; }
+.overlay .typed-sig {
+  display: block;
+  white-space: nowrap;
+  pointer-events: none;
+  line-height: 1.2;
+}
+.resize-handle {
+  position: absolute; width: 14px; height: 14px;
+  background: var(--brand); border: 2px solid #fff;
+  border-radius: 2px;
+  bottom: -7px; right: -7px; cursor: se-resize;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.remove-btn {
+  position: absolute; top: -10px; right: -10px;
+  background: #ef4444; color: #fff; border: 2px solid #fff; border-radius: 50%;
+  width: 22px; height: 22px; font-size: 14px; line-height: 18px;
+  text-align: center; cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.rotate-btn {
+  position: absolute; top: -10px; left: -10px;
+  background: #2563eb; color: #fff; border: 2px solid #fff; border-radius: 50%;
+  width: 22px; height: 22px; font-size: 12px; line-height: 18px;
+  text-align: center; cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* SIDEBAR CONTROLS */
+.sidebar h3 { margin-bottom: 0.75rem; font-size: 1rem; }
+.section { margin-bottom: 1.25rem; }
+.section-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.section-title svg { flex-shrink: 0; }
+
+label.file-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f9fafb;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: #374151;
+  transition: border-color .2s, background .2s;
+}
+label.file-label:hover { border-color: var(--brand); background: #eef2ff; }
+label.file-label input { display: none; }
+
+/* Signature pad */
+#signPad {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 280px;
+  cursor: crosshair;
+}
+
+/* Typed signature */
+.typed-input-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.typed-input-row input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color .2s;
+}
+.typed-input-row input:focus { border-color: var(--brand); }
+.font-options { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.font-opt {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  background: #fff;
+  transition: all .15s;
+}
+.font-opt:hover { border-color: var(--brand); }
+.font-opt.selected { border-color: var(--brand); background: #eef2ff; }
+.typed-preview {
+  min-height: 40px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fafafa;
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  color: #1a1a2e;
+}
+
+/* Opacity slider */
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+.slider-row input[type=range] {
+  flex: 1;
+  accent-color: var(--brand);
+}
+.slider-row span { font-size: 0.75rem; color: var(--muted); min-width: 32px; text-align: right; }
+
+/* Buttons */
+.btn {
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  border: none;
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: all .2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary { background: var(--brand-gradient); color: #fff; }
+.btn-primary:hover { filter: brightness(1.06); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
+.btn-outline { background: #fff; border: 1px solid var(--border); color: #374151; }
+.btn-outline:hover { background: #f9fafb; }
+.btn-danger { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+.btn-danger:hover { background: #fee2e2; }
+.btn-success { background: #059669; color: #fff; }
+.btn-success:hover { background: #047857; }
+.btn-block { width: 100%; justify-content: center; }
+.btn-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+.note { display: block; margin-top: 6px; font-size: 11px; color: var(--muted); }
+
+/* Tab pills */
+.tabs { display: flex; gap: 4px; margin-bottom: 12px; background: #f3f4f6; border-radius: 8px; padding: 3px; }
+.tab-btn {
+  flex: 1;
+  padding: 7px 0;
+  text-align: center;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all .15s;
+}
+.tab-btn.active { background: #fff; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Items list */
+.items-list { display: flex; flex-direction: column; gap: 6px; }
+.item-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px;
+  background: #f9fafb;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+.item-row .item-thumb { width: 36px; height: 36px; object-fit: contain; border-radius: 4px; background: #fff; border: 1px solid var(--border); }
+.item-row .item-info { flex: 1; }
+.item-row .item-label { font-weight: 500; }
+.item-row .item-type { font-size: 0.7rem; color: var(--muted); }
+.item-row button { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 1rem; padding: 2px 4px; }
+
+.empty-state { text-align: center; padding: 16px; color: var(--muted); font-size: 0.8rem; }
+
+.separator { height: 1px; background: var(--border); margin: 16px 0; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main { grid-template-columns: 1fr; }
+  .sidebar { position: static; max-height: none; }
+  .header-inner { height: auto; flex-wrap: wrap; padding: 10px 1rem; }
+  .nav { font-size: 0.8rem; gap: 0.6rem; }
+}
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<h1 class="page-title">Signature + Chop on PDF</h1>
+<p class="page-subtitle">Upload a PDF, add your company chop and signature, then download — 100% free, nothing leaves your browser.</p>
+
+<div class="main">
+  <!-- LEFT: PDF VIEWER -->
+  <div class="card">
+    <div class="pdf-container" id="pdf-container">
+      <div class="pdf-placeholder" id="pdf-placeholder" onclick="document.getElementById('pdfInput').click()">
+        <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg>
+        <span>Click or drag to upload PDF</span>
+        <span style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">Supports any PDF file</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: SIDEBAR -->
+  <div class="card sidebar">
+
+    <!-- Upload PDF -->
+    <div class="section">
+      <div class="section-title">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        PDF Document
+      </div>
+      <label class="file-label">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg>
+        <span id="pdfFileName">Choose PDF file...</span>
+        <input type="file" id="pdfInput" accept="application/pdf" />
+      </label>
+    </div>
+
+    <!-- Company Chop -->
+    <div class="section">
+      <div class="section-title">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="12" r="4"/></svg>
+        Company Chop / Stamp
+      </div>
+      <label class="file-label">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        <span id="chopFileName">Upload chop image (PNG/JPG)...</span>
+        <input type="file" id="chopInput" accept="image/*" />
+      </label>
+      <span class="note">
+        No chop yet? <a href="index.html" style="color:var(--brand);font-weight:600;text-decoration:none;">Create one free →</a>
+      </span>
+      <div class="slider-row" style="margin-top:10px;">
+        <span style="font-size:0.75rem;color:var(--muted);">Opacity:</span>
+        <input type="range" id="chopOpacity" min="10" max="100" value="100" />
+        <span id="chopOpacityVal">100%</span>
+      </div>
+      <label style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:0.78rem;color:#374151;cursor:pointer;">
+        <input type="checkbox" id="chopRemoveBg" checked style="accent-color:var(--brand);" />
+        Remove white background
+      </label>
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- Signature -->
+    <div class="section">
+      <div class="section-title">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+        Signature
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="draw">Draw</button>
+        <button class="tab-btn" data-tab="type">Type</button>
+        <button class="tab-btn" data-tab="upload">Upload</button>
+      </div>
+
+      <!-- Draw -->
+      <div class="tab-panel active" id="tab-draw">
+        <canvas id="signPad" height="120"></canvas>
+        <div class="slider-row" style="margin-top:8px;">
+          <span style="font-size:0.75rem;color:var(--muted);">Color:</span>
+          <input type="color" id="penColor" value="#1a1a2e" style="width:28px;height:28px;border:none;cursor:pointer;" />
+          <span style="font-size:0.75rem;color:var(--muted);margin-left:8px;">Width:</span>
+          <input type="range" id="penWidth" min="1" max="6" value="2" style="flex:1;" />
+        </div>
+        <div class="btn-group" style="margin-top:8px;">
+          <button class="btn btn-outline" onclick="clearSig()">Clear</button>
+          <button class="btn btn-primary" onclick="addDrawnSig()">Add Signature</button>
+        </div>
+      </div>
+
+      <!-- Type -->
+      <div class="tab-panel" id="tab-type">
+        <div class="typed-input-row">
+          <input type="text" id="typedName" placeholder="Type your name..." />
+        </div>
+        <div class="font-options" id="fontOptions">
+          <span class="font-opt selected" data-font="'Dancing Script', cursive" style="font-family:'Dancing Script',cursive;">Signature</span>
+          <span class="font-opt" data-font="'Great Vibes', cursive" style="font-family:'Great Vibes',cursive;">Signature</span>
+          <span class="font-opt" data-font="'Alex Brush', cursive" style="font-family:'Alex Brush',cursive;">Signature</span>
+        </div>
+        <div class="typed-preview" id="typedPreview" style="font-family:'Dancing Script',cursive;">Your Name</div>
+        <div class="slider-row">
+          <span style="font-size:0.75rem;color:var(--muted);">Size:</span>
+          <input type="range" id="typedSize" min="16" max="60" value="32" />
+          <span id="typedSizeVal">32px</span>
+        </div>
+        <div class="slider-row">
+          <span style="font-size:0.75rem;color:var(--muted);">Color:</span>
+          <input type="color" id="typedColor" value="#1a1a2e" style="width:28px;height:28px;border:none;cursor:pointer;" />
+        </div>
+        <button class="btn btn-primary btn-block" style="margin-top:8px;" onclick="addTypedSig()">Add Typed Signature</button>
+      </div>
+
+      <!-- Upload -->
+      <div class="tab-panel" id="tab-upload">
+        <label class="file-label">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg>
+          <span id="sigFileName">Upload signature image...</span>
+          <input type="file" id="sigUploadInput" accept="image/*" />
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:0.78rem;color:#374151;cursor:pointer;">
+          <input type="checkbox" id="sigRemoveBg" checked style="accent-color:var(--brand);" />
+          Remove white background
+        </label>
+        <span class="note">Snap a photo of a signature on white paper — the background is removed automatically.</span>
+      </div>
+
+      <div class="slider-row" style="margin-top:10px;">
+        <span style="font-size:0.75rem;color:var(--muted);">Signature opacity:</span>
+        <input type="range" id="sigOpacity" min="10" max="100" value="100" />
+        <span id="sigOpacityVal">100%</span>
+      </div>
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- Placed items -->
+    <div class="section">
+      <div class="section-title">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+        Placed Items (<span id="itemCount">0</span>)
+      </div>
+      <div class="items-list" id="itemsList">
+        <div class="empty-state">No items placed yet. Add a chop or signature above.</div>
+      </div>
+      <button class="btn btn-danger btn-block" style="margin-top:8px;display:none;" id="clearAllBtn" onclick="clearAll()">Remove All</button>
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- Download -->
+    <button class="btn btn-success btn-block" style="padding:12px;font-size:0.9rem;" onclick="downloadPDF()">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v12m0 0-4-4m4 4 4-4"/><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg>
+      Download PDF
+    </button>
+    <span class="note" style="text-align:center;">Files are processed locally in your browser. Nothing is uploaded.</span>
+
+  </div>
+</div>
+
+<!-- Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.2.0/dist/signature_pad.umd.min.js"></script>
+
+<script>
+/* ───── STATE ───── */
+let pdfDoc = null, scale = 1.2, originalPdfBytes = null, originalFileName = null;
+let overlays = []; // {el, src, page, file, type, rotation, opacity}
+let activePage = null;
+
+/* ───── TABS ───── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ───── PDF UPLOAD ───── */
+document.getElementById('pdfInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  originalFileName = file.name;
+  document.getElementById('pdfFileName').textContent = file.name;
+  const fr = new FileReader();
+  fr.onload = function () {
+    originalPdfBytes = this.result;
+    const data = new Uint8Array(this.result);
+    pdfjsLib.getDocument({ data }).promise.then(doc => {
+      pdfDoc = doc;
+      overlays = [];
+      updateItemsList();
+      renderAllPages();
+    });
+  };
+  fr.readAsArrayBuffer(file);
+});
+
+/* Drag-drop on placeholder */
+const placeholder = document.getElementById('pdf-placeholder');
+if (placeholder) {
+  ['dragenter', 'dragover'].forEach(evt => placeholder.addEventListener(evt, e => { e.preventDefault(); placeholder.style.borderColor = 'var(--brand)'; }));
+  ['dragleave', 'drop'].forEach(evt => placeholder.addEventListener(evt, e => { e.preventDefault(); placeholder.style.borderColor = ''; }));
+  placeholder.addEventListener('drop', e => {
+    const file = e.dataTransfer.files[0];
+    if (file && file.type === 'application/pdf') {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      document.getElementById('pdfInput').files = dt.files;
+      document.getElementById('pdfInput').dispatchEvent(new Event('change'));
+    }
+  });
+}
+
+/* ───── RENDER PDF ───── */
+function renderAllPages() {
+  const container = document.getElementById('pdf-container');
+  container.innerHTML = '';
+  document.getElementById('pdf-placeholder')?.remove();
+
+  for (let i = 1; i <= pdfDoc.numPages; i++) {
+    pdfDoc.getPage(i).then(page => {
+      const viewport = page.getViewport({ scale });
+      const wrapper = document.createElement('div');
+      wrapper.className = 'page-wrap';
+      wrapper.dataset.page = i;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      wrapper.appendChild(canvas);
+
+      const overlayCont = document.createElement('div');
+      overlayCont.style.cssText = 'position:absolute;top:0;left:0;width:' + canvas.width + 'px;height:' + canvas.height + 'px;overflow:visible;';
+      overlayCont.className = 'overlay-container';
+      wrapper.appendChild(overlayCont);
+
+      const footer = document.createElement('div');
+      footer.className = 'page-footer';
+      footer.textContent = 'Page ' + i + ' / ' + pdfDoc.numPages;
+      wrapper.appendChild(footer);
+
+      container.appendChild(wrapper);
+      page.render({ canvasContext: canvas.getContext('2d'), viewport });
+
+      if (i === 1) setActivePage(wrapper);
+    });
+  }
+}
+
+/* Track active page on scroll */
+window.addEventListener('scroll', () => {
+  const pages = document.querySelectorAll('.page-wrap');
+  let closest = null, minDist = Infinity;
+  pages.forEach(p => {
+    const rect = p.getBoundingClientRect();
+    const dist = Math.abs(rect.top + rect.height / 2 - window.innerHeight / 2);
+    if (dist < minDist) { minDist = dist; closest = p; }
+  });
+  if (closest) setActivePage(closest);
+});
+
+function setActivePage(page) {
+  if (activePage) activePage.classList.remove('active-page');
+  activePage = page;
+  activePage.classList.add('active-page');
+}
+
+/* ───── OVERLAY SYSTEM ───── */
+function addOverlay(src, wrapper, opts = {}) {
+  const overlayCont = wrapper.querySelector('.overlay-container');
+  const pageNum = parseInt(wrapper.dataset.page);
+  const type = opts.type || 'chop';
+  const opacity = opts.opacity ?? 100;
+  const file = opts.file || null;
+  const isTyped = opts.isTyped || false;
+  const typedText = opts.typedText || '';
+  const typedFont = opts.typedFont || "'Dancing Script', cursive";
+  const typedSize = opts.typedSize || 32;
+  const typedColor = opts.typedColor || '#1a1a2e';
+
+  const div = document.createElement('div');
+  div.className = 'overlay';
+  div.style.top = '80px';
+  div.style.left = '80px';
+  div.style.opacity = opacity / 100;
+
+  if (isTyped) {
+    const span = document.createElement('span');
+    span.className = 'typed-sig';
+    span.textContent = typedText;
+    span.style.fontFamily = typedFont;
+    span.style.fontSize = typedSize + 'px';
+    span.style.color = typedColor;
+    div.appendChild(span);
+  } else {
+    const img = document.createElement('img');
+    img.src = src;
+    div.appendChild(img);
+  }
+
+  // Remove button
+  const remove = document.createElement('button');
+  remove.className = 'remove-btn';
+  remove.innerHTML = '×';
+  remove.onclick = () => {
+    div.remove();
+    overlays = overlays.filter(o => o.el !== div);
+    updateItemsList();
+  };
+  div.appendChild(remove);
+
+  // Rotate button
+  const rotateBtn = document.createElement('button');
+  rotateBtn.className = 'rotate-btn';
+  rotateBtn.innerHTML = '↻';
+  rotateBtn.title = 'Rotate 15°';
+  let rotation = 0;
+  rotateBtn.onclick = (e) => {
+    e.stopPropagation();
+    rotation = (rotation + 15) % 360;
+    div.style.transform = 'rotate(' + rotation + 'deg)';
+    const ov = overlays.find(o => o.el === div);
+    if (ov) ov.rotation = rotation;
+  };
+  div.appendChild(rotateBtn);
+
+  // Resize handle
+  if (!isTyped) {
+    const handle = document.createElement('div');
+    handle.className = 'resize-handle';
+    div.appendChild(handle);
+    makeResizable(div, div.querySelector('img'), handle);
+  }
+
+  overlayCont.appendChild(div);
+  makeDraggable(div);
+
+  const entry = {
+    el: div, src, page: pageNum, file, type, rotation: 0, opacity,
+    isTyped, typedText, typedFont, typedSize, typedColor
+  };
+  overlays.push(entry);
+  updateItemsList();
+}
+
+/* ───── BACKGROUND REMOVER (in-browser, no upload) ───── */
+// Makes near-white pixels transparent so uploaded chops/signatures
+// overlay cleanly on the PDF. Uses the min RGB channel to detect white
+// while keeping coloured/black ink, with feathered edges for anti-aliasing.
+function removeWhiteBackground(srcUrl, opts = {}) {
+  const upper = opts.upper ?? 245;              // min-channel >= this = fully transparent (white)
+  const lower = Math.max(0, upper - (opts.feather ?? 30)); // <= this = fully kept (ink)
+  const clamp8 = v => (v < 0 ? 0 : v > 255 ? 255 : v);
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || img.width;
+      canvas.height = img.naturalHeight || img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      let imgData;
+      try {
+        imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      } catch (err) {
+        return reject(err); // tainted canvas — bail to original
+      }
+      const d = imgData.data;
+      for (let i = 0; i < d.length; i += 4) {
+        const r = d[i], g = d[i + 1], b = d[i + 2];
+        const m = Math.min(r, g, b);
+        let af;                                 // alpha factor 0..1
+        if (m >= upper)      af = 0;
+        else if (m <= lower) af = 1;
+        else                 af = (upper - m) / (upper - lower);
+        // Un-blend white out of edge pixels so no halo/fringe remains (clean cut)
+        if (af > 0 && af < 1) {
+          d[i]     = clamp8((r - 255 * (1 - af)) / af);
+          d[i + 1] = clamp8((g - 255 * (1 - af)) / af);
+          d[i + 2] = clamp8((b - 255 * (1 - af)) / af);
+        }
+        d[i + 3] = Math.round(d[i + 3] * af);
+      }
+      ctx.putImageData(imgData, 0, 0);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.onerror = reject;
+    img.src = srcUrl;
+  });
+}
+
+/* ───── CHOP UPLOAD ───── */
+document.getElementById('chopInput').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  document.getElementById('chopFileName').textContent = file.name;
+  let src = URL.createObjectURL(file);
+  const page = activePage || document.querySelector('.page-wrap');
+  if (!page) return alert('Upload a PDF first.');
+  if (document.getElementById('chopRemoveBg').checked) {
+    try { src = await removeWhiteBackground(src); }
+    catch (err) { console.error('BG remove failed, using original:', err); }
+  }
+  const opacity = parseInt(document.getElementById('chopOpacity').value);
+  addOverlay(src, page, { type: 'chop', file, opacity });
+});
+
+document.getElementById('chopOpacity').addEventListener('input', e => {
+  document.getElementById('chopOpacityVal').textContent = e.target.value + '%';
+});
+
+/* ───── SIGNATURE: DRAW ───── */
+const sigPad = new SignaturePad(document.getElementById('signPad'), {
+  penColor: '#1a1a2e',
+  minWidth: 1.5,
+  maxWidth: 3
+});
+
+document.getElementById('penColor').addEventListener('input', e => {
+  sigPad.penColor = e.target.value;
+});
+document.getElementById('penWidth').addEventListener('input', e => {
+  const w = parseFloat(e.target.value);
+  sigPad.minWidth = w * 0.6;
+  sigPad.maxWidth = w * 1.5;
+});
+
+function clearSig() { sigPad.clear(); }
+
+function addDrawnSig() {
+  if (sigPad.isEmpty()) return alert('Please draw your signature first.');
+  const page = activePage || document.querySelector('.page-wrap');
+  if (!page) return alert('Upload a PDF first!');
+  const src = sigPad.toDataURL('image/png');
+  const opacity = parseInt(document.getElementById('sigOpacity').value);
+  addOverlay(src, page, { type: 'signature', opacity });
+}
+
+/* ───── SIGNATURE: TYPE ───── */
+let selectedFont = "'Dancing Script', cursive";
+
+document.querySelectorAll('.font-opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('.font-opt').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    selectedFont = opt.dataset.font;
+    document.getElementById('typedPreview').style.fontFamily = selectedFont;
+  });
+});
+
+document.getElementById('typedName').addEventListener('input', e => {
+  document.getElementById('typedPreview').textContent = e.target.value || 'Your Name';
+});
+document.getElementById('typedSize').addEventListener('input', e => {
+  document.getElementById('typedSizeVal').textContent = e.target.value + 'px';
+  document.getElementById('typedPreview').style.fontSize = e.target.value + 'px';
+});
+document.getElementById('typedColor').addEventListener('input', e => {
+  document.getElementById('typedPreview').style.color = e.target.value;
+});
+
+document.getElementById('sigOpacity').addEventListener('input', e => {
+  document.getElementById('sigOpacityVal').textContent = e.target.value + '%';
+});
+
+function addTypedSig() {
+  const name = document.getElementById('typedName').value.trim();
+  if (!name) return alert('Please type your name first.');
+  const page = activePage || document.querySelector('.page-wrap');
+  if (!page) return alert('Upload a PDF first!');
+  const opacity = parseInt(document.getElementById('sigOpacity').value);
+  const size = parseInt(document.getElementById('typedSize').value);
+  const color = document.getElementById('typedColor').value;
+  addOverlay(null, page, {
+    type: 'signature', isTyped: true,
+    typedText: name, typedFont: selectedFont, typedSize: size, typedColor: color, opacity
+  });
+}
+
+/* ───── SIGNATURE: UPLOAD IMAGE ───── */
+document.getElementById('sigUploadInput').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  document.getElementById('sigFileName').textContent = file.name;
+  let src = URL.createObjectURL(file);
+  const page = activePage || document.querySelector('.page-wrap');
+  if (!page) return alert('Upload a PDF first!');
+  if (document.getElementById('sigRemoveBg').checked) {
+    try { src = await removeWhiteBackground(src); }
+    catch (err) { console.error('BG remove failed, using original:', err); }
+  }
+  const opacity = parseInt(document.getElementById('sigOpacity').value);
+  addOverlay(src, page, { type: 'signature', file, opacity });
+});
+
+/* ───── ITEMS LIST ───── */
+function updateItemsList() {
+  const list = document.getElementById('itemsList');
+  const count = document.getElementById('itemCount');
+  const clearBtn = document.getElementById('clearAllBtn');
+  count.textContent = overlays.length;
+  clearBtn.style.display = overlays.length > 1 ? 'flex' : 'none';
+
+  if (overlays.length === 0) {
+    list.innerHTML = '<div class="empty-state">No items placed yet. Add a chop or signature above.</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  overlays.forEach((o, i) => {
+    const row = document.createElement('div');
+    row.className = 'item-row';
+
+    if (!o.isTyped && o.src) {
+      const thumb = document.createElement('img');
+      thumb.className = 'item-thumb';
+      thumb.src = o.src;
+      row.appendChild(thumb);
+    } else if (o.isTyped) {
+      const thumb = document.createElement('span');
+      thumb.style.cssText = 'font-family:' + o.typedFont + ';font-size:14px;width:36px;text-align:center;overflow:hidden;';
+      thumb.textContent = o.typedText.substring(0, 4);
+      row.appendChild(thumb);
+    }
+
+    const info = document.createElement('div');
+    info.className = 'item-info';
+    info.innerHTML = '<div class="item-label">' + (o.type === 'chop' ? 'Company Chop' : 'Signature') + '</div>' +
+      '<div class="item-type">Page ' + o.page + ' · ' + (o.isTyped ? 'Typed' : o.type === 'chop' ? 'Image' : 'Drawn/Image') + '</div>';
+    row.appendChild(info);
+
+    const del = document.createElement('button');
+    del.innerHTML = '×';
+    del.title = 'Remove';
+    del.onclick = () => {
+      o.el.remove();
+      overlays.splice(i, 1);
+      updateItemsList();
+    };
+    row.appendChild(del);
+
+    list.appendChild(row);
+  });
+}
+
+function clearAll() {
+  overlays.forEach(o => o.el.remove());
+  overlays = [];
+  updateItemsList();
+}
+
+/* ───── DRAG & RESIZE ───── */
+function makeDraggable(el) {
+  let isDown = false, startX, startY, origX, origY;
+  function start(e) {
+    if (e.target.classList.contains('resize-handle') || e.target.classList.contains('remove-btn') || e.target.classList.contains('rotate-btn')) return;
+    isDown = true;
+    const pt = e.touches ? e.touches[0] : e;
+    startX = pt.clientX; startY = pt.clientY;
+    origX = parseInt(el.style.left) || 0;
+    origY = parseInt(el.style.top) || 0;
+    e.preventDefault();
+  }
+  function move(e) {
+    if (!isDown) return;
+    const pt = e.touches ? e.touches[0] : e;
+    el.style.left = (origX + (pt.clientX - startX)) + 'px';
+    el.style.top = (origY + (pt.clientY - startY)) + 'px';
+  }
+  function end() { isDown = false; }
+  el.addEventListener('mousedown', start);
+  window.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  el.addEventListener('touchstart', start, { passive: false });
+  window.addEventListener('touchmove', move, { passive: false });
+  window.addEventListener('touchend', end);
+}
+
+function makeResizable(el, img, handle) {
+  let resizing = false, startX, startW;
+  function start(e) {
+    resizing = true;
+    const pt = e.touches ? e.touches[0] : e;
+    startX = pt.clientX;
+    startW = img.offsetWidth;
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  function move(e) {
+    if (!resizing) return;
+    const pt = e.touches ? e.touches[0] : e;
+    const newW = startW + (pt.clientX - startX);
+    if (newW > 30) { img.style.width = newW + 'px'; img.style.height = 'auto'; }
+  }
+  function end() { resizing = false; }
+  handle.addEventListener('mousedown', start);
+  window.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  handle.addEventListener('touchstart', start, { passive: false });
+  window.addEventListener('touchmove', move, { passive: false });
+  window.addEventListener('touchend', end);
+}
+
+/* ───── DOWNLOAD PDF ───── */
+function base64ToUint8Array(base64) {
+  const raw = atob(base64.split(',')[1]);
+  const arr = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+  return arr;
+}
+
+/* Convert typed signature to PNG via canvas */
+function typedSigToImage(text, font, size, color) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.font = size + 'px ' + font;
+  const metrics = ctx.measureText(text);
+  const w = Math.ceil(metrics.width) + 20;
+  const h = Math.ceil(size * 1.5) + 10;
+  canvas.width = w;
+  canvas.height = h;
+  ctx.font = size + 'px ' + font;
+  ctx.fillStyle = color;
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, 10, h / 2);
+  return canvas.toDataURL('image/png');
+}
+
+async function downloadPDF() {
+  if (!originalPdfBytes) return alert('Upload a PDF first!');
+  if (overlays.length === 0) return alert('Add at least one stamp or signature before downloading.');
+
+  const pdf = await PDFLib.PDFDocument.load(originalPdfBytes);
+  const pages = pdf.getPages();
+
+  for (const o of overlays) {
+    const page = pages[o.page - 1];
+    if (!page) continue;
+
+    let imgBytes, img;
+    let src = o.src;
+
+    // Convert typed sig to image
+    if (o.isTyped) {
+      src = typedSigToImage(o.typedText, o.typedFont, o.typedSize, o.typedColor);
+    }
+
+    if (src && src.startsWith('data:image/')) {
+      imgBytes = base64ToUint8Array(src);
+      img = await pdf.embedPng(imgBytes);
+    } else if (o.file) {
+      imgBytes = await o.file.arrayBuffer();
+      if (o.file.type.includes('png')) img = await pdf.embedPng(imgBytes);
+      else img = await pdf.embedJpg(imgBytes);
+    } else if (src) {
+      imgBytes = await fetch(src).then(r => r.arrayBuffer());
+      // Detect type from blob
+      const arr = new Uint8Array(imgBytes);
+      const isPng = arr[0] === 0x89 && arr[1] === 0x50;
+      if (isPng) img = await pdf.embedPng(imgBytes);
+      else img = await pdf.embedJpg(imgBytes);
+    }
+
+    if (!img) continue;
+
+    const wrapper = document.querySelector(".page-wrap[data-page='" + o.page + "']");
+    const canvas = wrapper.querySelector('canvas');
+    const { width, height } = page.getSize();
+    const scaleX = width / canvas.width, scaleY = height / canvas.height;
+    const offsetLeft = parseFloat(o.el.style.left) || 0;
+    const offsetTop = parseFloat(o.el.style.top) || 0;
+
+    const w = o.el.offsetWidth * scaleX;
+    const h = o.el.offsetHeight * scaleY;
+    const x = offsetLeft * scaleX;
+    const y = height - (offsetTop * scaleY) - h;
+
+    const drawOpts = { x, y, width: w, height: h, opacity: (o.opacity ?? 100) / 100 };
+
+    // Handle rotation
+    if (o.rotation) {
+      drawOpts.rotate = PDFLib.degrees(-(o.rotation));
+    }
+
+    page.drawImage(img, drawOpts);
+  }
+
+  const out = await pdf.save();
+  const blob = new Blob([out], { type: 'application/pdf' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+
+  if (originalFileName) {
+    let name = originalFileName.split('/').pop().split('\\').pop();
+    const lastDot = name.lastIndexOf('.');
+    let base = lastDot !== -1 ? name.substring(0, lastDot) : name;
+    let ext = lastDot !== -1 ? name.substring(lastDot) : '.pdf';
+    base = base.replace(/[^\w\-\.]+/g, '_');
+    a.download = base + '_signed' + ext;
+  } else {
+    a.download = 'signed_document.pdf';
+  }
+
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+}
+</script>
+
+  <script src="nav.js" defer></script>
+</body>
+</html>

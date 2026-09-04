@@ -1,0 +1,684 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>CopOnline.my</title>
+  <meta name="description" content="Digital Company Chop Generator built for Malaysia." />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="favicon.ico" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+
+:root {
+  --bg: #f5f7fa;
+  --card-bg: #ffffff;
+  --radius: 12px;
+  --shadow: 0 24px 48px -8px rgba(31, 45, 61, 0.07);
+  --text: #1f2d3d;
+  --muted: #6b7280;
+  --border: #e8eaee;
+  --brand: #6366f1;
+  --brand-gradient: linear-gradient(90deg, #6366f1 0%, #a78bfa 100%);
+  --transition: .2s ease;
+  font-family: "Inter", system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container { max-width: 1160px; margin: 0 auto; padding: 0 1rem 3rem; }
+h1 { font-size: 2.4rem; margin: 0; font-weight: 700; line-height: 1.1; }
+p { margin: 0; }
+
+/* HEADER */
+.header {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 14px rgba(31, 45, 61, 0.04);
+}
+.header-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  height: 72px;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.footer a,
+.footer a:visited {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer a:hover {
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.footer-note {
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: #8b96a3;
+  margin-top: 12px;
+}
+
+
+/* Logo */
+.logo { display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text); font-weight:600; font-size:1.125rem; flex-shrink:0; white-space:nowrap; }
+.logo .mark {
+  width: 36px; height: 36px; background: var(--brand-gradient); border-radius: 8px;
+  display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:1rem;
+}
+.tagline { font-size: 0.65rem; color: var(--muted); margin-left: 4px; }
+
+/* NAV */
+.nav { display:flex; gap:1.25rem; align-items:center; margin-left:auto; flex-wrap:wrap; position:relative; font-size:0.9rem; }
+.nav a { position:relative; text-decoration:none; color:#374151; font-weight:500; padding:6px 4px; transition: color .2s ease; }
+.nav a:hover { color: var(--brand); }
+.nav a.active { color: var(--brand); font-weight:600; }
+.nav a.active::after { content:""; position:absolute; left:0; bottom:-4px; width:100%; height:3px; border-radius:2px; background: var(--brand-gradient); }
+
+.divider { width:1px; height:28px; background:#d1d5db; margin:0 12px; }
+
+/* BUTTONS */
+.button, .btn { cursor:pointer; border:none; border-radius:999px; padding:10px 18px; font-weight:600; font-size:0.85rem; display:inline-flex; align-items:center; gap:6px; transition:all var(--transition); outline:none; }
+.button-primary, .btn-primary { background: var(--brand-gradient); color:#fff; box-shadow:0 8px 30px rgba(99, 102, 241, 0.15); }
+.button-primary:hover, .btn-primary:hover { filter:brightness(1.07); transform:translateY(-1px); }
+.button-outline, .btn-outline { background:#fff; border:1px solid var(--border); color:#374151; }
+.button-outline:hover, .btn-outline:hover { background:#f9f9fb; box-shadow:0 8px 24px rgba(31, 45, 61, 0.04); }
+
+/* CARD / GRID */
+.card { background:var(--card-bg); border-radius:var(--radius); box-shadow:var(--shadow); padding:2rem; position:relative; }
+.grid-2 { display:grid; gap:2rem; grid-template-columns:1fr 1fr; }
+@media (max-width: 1024px) { .grid-2 { grid-template-columns:1fr; } }
+
+/* FORM FIELDS */
+.field-label { display:block; font-size:0.55rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; color:var(--muted); }
+.input { width:100%; padding:12px 14px; border-radius:8px; border:1px solid var(--border); background:#f9f9fb; font-size:0.9rem; outline:none; transition: box-shadow .2s ease, border .2s ease; }
+.input:focus { border-color:var(--brand); box-shadow:0 0 0 4px rgba(99, 102, 241, 0.2); }
+
+/* TEXT */
+.small { font-size:0.75rem; color: var(--muted); }
+
+/* FOOTER */
+.footer { background:#fff; border-top:1px solid var(--border); padding-top:3rem; padding-bottom:2rem; margin-top:4rem; }
+.footer-inner { max-width:1160px; margin:0 auto; padding:0 1rem; display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:2rem; }
+.footer-section { display:flex; flex-direction:column; gap:6px; }
+.footer-title { font-weight:600; margin-bottom:4px; }
+.footer-note { font-size:0.65rem; color:#8b96a3; margin-top:12px; }
+
+/* spacing helpers */
+.main-content { padding-top:120px; padding-bottom:64px; }
+.hero { margin-bottom:48px; }
+.cards-row { gap:2rem; margin-bottom:64px; }
+
+/* Mobile dropdown links only — modern font & style */
+.mobile-nav a:link,
+.mobile-nav a:visited {
+  font-family: 'Inter', 'Segoe UI', Roboto, sans-serif; /* clean modern font */
+  font-size: 0.95rem; /* slightly smaller for mobile */
+  font-weight: 500;   /* medium weight for readability */
+  color: #111827;     /* neutral dark grey instead of browser blue/purple */
+  text-decoration: none; /* remove underline */
+  letter-spacing: 0.2px; /* subtle spacing for cleaner look */
+  display: block;
+  padding: 10px 0;
+}
+
+/* Active page link */
+.mobile-nav a.active {
+  color: var(--brand);
+}
+
+/* Hover/tap feedback */
+.mobile-nav a:hover {
+  color: var(--brand);
+}
+
+
+
+
+@media (max-width: 640px) {
+  .header-inner { flex-direction: column; align-items:flex-start; height:auto; gap:12px; padding:16px 1rem; }
+  .nav { flex-direction: column; align-items:flex-start; margin-left:0; gap:8px; }
+  .btn-primary { width:100%; text-align:center; }
+  .divider { display:none; }
+  .logo { font-size:1rem; }
+  .tagline { font-size:0.55rem; }
+}
+
+.header-right { display:flex; align-items:center; gap:12px; margin-left:auto; }
+.hamburger { background:none; border:none; font-size:1.5rem; cursor:pointer; padding:8px; line-height:1; }
+.mobile-nav { display:none; }
+
+@media (max-width: 640px) {
+  .header-inner { flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; padding: 16px 1rem; }
+  .header-right { display:flex; gap:8px; align-items:center; }
+  .mobile-nav { display:flex; flex-direction:column; gap:8px; width:100%; padding-top:8px; }
+  .nav, .divider { display:none; }
+}
+
+/* Hide hamburger in desktop */
+@media (min-width: 641px) {
+  .hamburger { display:none; }
+  .mobile-nav { display:none !important; }
+}
+
+.desktop-only { display:flex; }
+.mobile-only { display:none; }
+@media (max-width:640px) {
+  .desktop-only { display:none; }
+  .mobile-only { display:inline-flex; }
+}
+
+
+
+.template-fields {
+  display: none;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.template-fields.active {
+  display: block;
+  opacity: 1;
+  max-height: 1000px;
+}
+
+.dropdown { position:relative; }
+.dropbtn { background:none; border:none; font:inherit; color:#374151; font-weight:500; cursor:pointer; padding:6px 4px; display:inline-flex; align-items:center; gap:3px; }
+.dropdown:hover .dropbtn, .dropbtn.active { color:var(--brand); font-weight:600; }
+.dropdown-menu { position:absolute; top:calc(100% + 4px); left:0; background:#fff; border:1px solid var(--border); border-radius:10px; box-shadow:0 8px 24px rgba(31,45,61,0.12); min-width:160px; padding:6px; display:none; flex-direction:column; z-index:300; }
+.dropdown:hover .dropdown-menu, .dropdown:focus-within .dropdown-menu { display:flex; }
+.dropdown-menu a { padding:8px 10px; border-radius:6px; font-size:0.9rem; margin:0; white-space:nowrap; }
+.dropdown-menu a:hover { background:#eef2ff; color:var(--brand); }
+
+</style>
+<body>
+  <main class="container">
+    <div class="hero" style="margin-top:40px;margin-bottom:40px;">
+      <h1>Create Your Digital Company Chop Instantly</h1>
+      <p style="margin-top:15px;color:#556178;">
+        No physical stamp. Instant generation with SSM No. and address. Preview on the right and download a clean HD stamp — 100% free, no watermark.      </p>
+      <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="pdfsign.html" class="btn btn-primary">✍️ Sign &amp; Chop a PDF (Free)</a>
+      </div>
+    </div>
+
+    <div class="grid-2" style="align-items:start;">
+      <!-- Form Card -->
+      <div class="card">
+        <div style="margin-bottom:16px;">
+          <div style="font-size:20px;font-weight:700;">Generate Your Chop</div>
+          <div style="font-size:14px;color:#556178;margin-top:4px;">
+            No login needed. Design is final once downloaded.          </div>
+        </div>
+
+        <form id="stamp-form" style="display:grid;gap:1rem;">
+          <!-- Template selector -->
+          <div>
+            <label class="field-label">Template</label>
+            <select name="template" class="input">
+              <option value="round">🌀 Round Stamp</option>
+              <option value="box">🧱 Box Stamp</option>
+              <option value="info">📦 Info Stamp</option>
+            </select>
+          </div>
+
+          <!-- Round fields -->
+          <div class="template-fields" data-for="round">
+            <label class="field-label">Company Name</label>
+            <input class="input" name="companyName" value="MEGAH HOLDINGS SDN BHD" />
+
+            <label class="field-label">Company No. (New)</label>
+            <input class="input" name="ssmNoNew" value="202401234567" />
+
+            <label class="field-label">Company No. (Old)</label>
+            <input class="input" name="ssmNoOld" value="123456-A" />
+          </div>
+
+          <!-- Box fields -->
+          <div class="template-fields" data-for="box">
+            <label class="field-label">Company Name</label>
+            <input class="input" name="companyName" value="MEGAH HOLDINGS SDN BHD" />
+
+            <label class="field-label">Company No. (New)</label>
+            <input class="input" name="ssmNoNew" value="202401234567" />
+            <input class="input" name="ssmNoOld" value="123456-A" style="display:none;" />
+
+            <label class="field-label">Address</label>
+            <input class="input" name="address1" value="No. 88, Jalan Mega 1" placeholder="Address Line 1" />
+            <input class="input" name="address2" value="Taman Industri Mega" placeholder="Address Line 2" />
+            <input class="input" name="address3" value="43000 Kajang, Selangor" placeholder="Address Line 3" />
+          </div>
+
+          <!-- Info fields -->
+          <div class="template-fields" data-for="info">
+            <label class="field-label">Company Name</label>
+            <input class="input" name="companyName" value="MEGAH HOLDINGS SDN BHD" />
+
+            <label class="field-label">Company No. (New)</label>
+            <input class="input" name="ssmNoNew" value="202401234567" />
+            <input class="input" name="ssmNoOld" value="123456-A" style="display:none;" />
+
+            <label class="field-label">Address</label>
+            <input class="input" name="address1" value="No. 88, Jalan Mega 1" />
+            <input class="input" name="address2" value="Taman Industri Mega" />
+            <input class="input" name="address3" value="43000 Kajang, Selangor" />
+
+            <label class="field-label">Telephone</label>
+            <input class="input" name="phone" value="+603-8899 1234" />
+
+            <label class="field-label">Email (shown on stamp)</label>
+            <input class="input" name="email" value="info@megahholdings.com" />
+          </div>
+
+          <!-- Color -->
+          <div>
+            <label class="field-label">Stamp Colour</label>
+            <div style="display:flex;gap:8px;">
+              <button type="button" data-color="black" data-active="1" class="btn btn-outline" style="flex:1;">Black</button>
+              <button type="button" data-color="red" class="btn btn-outline" style="flex:1;">Red</button>
+              <button type="button" data-color="blue" class="btn btn-outline" style="flex:1;">Blue</button>
+            </div>
+          </div>
+
+          <!-- Hidden color field -->
+          <input type="hidden" name="color" id="color-input" value="black" />
+
+          <!-- Actions -->
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;">
+           <button type="button" id="btn-download-hd" class="btn btn-primary" style="flex:1;min-width:140px;">
+              Download HD PNG (Free)
+           </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Preview Card -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+          <div style="font-weight:600;">Live Preview</div>
+          <div style="font-size:12px;color:#6b7280;">Looks like your real chop</div>
+        </div>
+        <div id="stamp-preview" style="padding:1rem 0;display:flex;justify-content:center;"></div>
+        <div class="small">Vector-based; sharp on any document. 100% free — no watermark.</div>
+        <div style="margin-top:8px;background:#eef4ff;padding:8px 12px;border-radius:8px;font-size:12px;color:#374151;text-align:center;">
+          Fill in your details and download your HD stamp instantly — completely free.
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/dom-to-image-more@3.5.0/dist/dom-to-image-more.min.js"></script>
+  <script src="nav.js" defer></script>
+</body>
+
+<script>
+  // assets/js/app.js
+document.addEventListener('DOMContentLoaded', function () {
+
+    console.log("toggleFields ready");
+
+  // ----------------------------
+  // Hamburger toggle
+  // ----------------------------
+  var burger = document.getElementById('hamburger');
+  var mobile = document.getElementById('mobile-menu');
+  if (burger && mobile) {
+    burger.addEventListener('click', function () {
+      mobile.style.display = (mobile.style.display === 'none' || mobile.style.display === '') ? 'flex' : 'none';
+    });
+  }
+
+  // ----------------------------
+  // Stamp preview wiring (home)
+  // ----------------------------
+  var form = document.getElementById('stamp-form');
+  var previewHost = document.getElementById('stamp-preview');
+  var colorHidden = document.getElementById('color-input'); // <input type="hidden" name="color" id="color-input">
+
+  if (!form || !previewHost) return; // not on the homepage
+
+  // ----------------------------
+  // Toggle template-specific fields
+  // ----------------------------
+// ----------------------------
+// Toggle template-specific fields
+// ----------------------------
+function toggleFields(template) {
+  console.log("toggleFields running with", template);
+  var groups = form.querySelectorAll('.template-fields');
+  groups.forEach(function (g) {
+    var targets = g.dataset.for.split(',').map(s => s.trim());
+    if (targets.includes(template)) {
+      g.classList.add('active');   // show
+    } else {
+      g.classList.remove('active'); // hide
+    }
+  });
+}
+
+var templateSelect = form.querySelector('[name="template"]');
+if (templateSelect) {
+  toggleFields(templateSelect.value); // run once on load
+  templateSelect.addEventListener('change', function () {
+    console.log("Template changed:", this.value);
+    toggleFields(this.value);
+    renderPreview();
+  });
+}
+
+
+
+
+  // ----------------------------
+  // Helpers
+  // ----------------------------
+  function shortHash(s) {
+    var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+    return Math.abs(h).toString(16).toUpperCase().slice(0, 6);
+  }
+  function uppercase(s) { return (s || '').toUpperCase(); }
+  function getTextColor(c) {
+    if (c === 'red') return '#D33';
+    if (c === 'blue') return '#1565C0';
+    return '#1F2D3D';
+  }
+
+function readForm() {
+  var ssmNoNew = form.querySelector('[name="ssmNoNew"]')?.value || '';
+  var ssmNo    = form.querySelector('[name="ssmNo"]')?.value || '';
+
+  return {
+    companyName: form.querySelector('[name="companyName"]')?.value || '',
+    ssmNo:       ssmNo || ssmNoNew,   // 👈 fallback here
+    ssmNoNew:    ssmNoNew,
+    ssmNoOld:    form.querySelector('[name="ssmNoOld"]')?.value || '',
+    address: [
+      form.querySelector('[name="address1"]')?.value || '',
+      form.querySelector('[name="address2"]')?.value || '',
+      form.querySelector('[name="address3"]')?.value || ''
+    ],
+    phone: form.querySelector('[name="phone"]')?.value || '',
+    email: form.querySelector('[name="email"]')?.value || '',
+    template: form.querySelector('[name="template"]')?.value || 'round',
+    color: (form.querySelector('button[data-color][data-active="1"]')?.dataset.color) || 'black'
+  };
+}
+
+
+
+
+
+
+
+  // ---------- SVG builders ----------
+function roundStamp(d, tc, ff) {
+  var text = (d.companyName || '').toUpperCase();
+  var cx = 140, cy = 140, R = 80, step = 10;
+
+  // Arc text (company name)
+  var chars = '';
+  var total = (text.length ? text.length - 1 : 0) * step, start = -total / 2;
+  function pol(cx, cy, r, a) { var rad = (a - 90) * Math.PI / 180; return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) }; }
+  for (var i = 0; i < text.length; i++) {
+    var ang = start + i * step, p = pol(cx, cy, R, ang);
+    chars += `<text x="${p.x}" y="${p.y}" fill="${tc}" font-size="20" font-family="${ff}" font-weight="700" text-anchor="middle" dominant-baseline="middle" transform="rotate(${ang}, ${p.x}, ${p.y})">${text[i]}</text>`;
+  }
+
+  // Center text: show both new + old
+  // Center text: New + Old inside the inner circle
+var mid = '';
+if (d.ssmNoNew) {
+  mid += `<text x="${cx}" y="${cy - 8}" font-size="13" text-anchor="middle" fill="${tc}"
+             font-family="${ff}" font-weight="600">${d.ssmNoNew.toUpperCase()}</text>`;
+}
+if (d.ssmNoOld) {
+  mid += `<text x="${cx}" y="${cy + 12}" font-size="13" text-anchor="middle" fill="${tc}"
+             font-family="${ff}" font-weight="600">${d.ssmNoOld.toUpperCase()}</text>`;
+}
+
+// <circle cx="${cx}" cy="${cy}" r="130" stroke="${tc}" stroke-width="3" fill="none" stroke-dasharray="4 2" />
+
+  return `
+    <svg width="280" height="280" viewBox="0 0 280 280" role="img">
+
+      <circle cx="${cx}" cy="${cy}" r="110" stroke="${tc}" stroke-width="6" fill="none" />
+      ${chars}
+      <circle cx="${cx}" cy="${cy}" r="50" stroke="${tc}" stroke-width="2" fill="none" />
+      ${mid}
+    </svg>
+  `;
+}
+
+
+
+
+function boxStamp(d, tc, ff) {
+  var cx = 180;
+  var lines = [];
+
+  if (d.companyName) lines.push({ text: d.companyName.toUpperCase(), size: 22, weight: 700 });
+  if (d.ssmNo)       lines.push({ text: d.ssmNo.toUpperCase(), size: 14, weight: 600, extraGap: 8 }); // add spacing after
+  (d.address || []).forEach(line => {
+    if (line) lines.push({ text: line.toUpperCase(), size: 13, weight: 500 });
+  });
+
+  var totalHeight = lines.length * 20 + lines.reduce((acc, l) => acc + (l.extraGap || 0), 0);
+  var startY = (220 - totalHeight) / 2 + 20;
+
+  var y = startY;
+  var svgLines = lines.map(l => {
+    var out = `<text x="${cx}" y="${y}" font-size="${l.size}" fill="${tc}" font-family="${ff}" font-weight="${l.weight}" text-anchor="middle">${l.text}</text>`;
+    y += 20 + (l.extraGap || 0);
+    return out;
+  }).join('');
+
+  return `
+    <svg width="320" height="200" viewBox="0 0 360 220" role="img" aria-label="Box stamp">
+      <rect x="8" y="8" width="344" height="204" stroke="${tc}" stroke-width="3" fill="none" rx="4" />
+      ${svgLines}
+    </svg>
+  `;
+}
+
+
+
+
+function infoStamp(d, tc, ff) {
+  var cx = 180;
+  var lines = [];
+
+  if (d.companyName) lines.push({ text: d.companyName.toUpperCase(), size: 22, weight: 700 });
+  if (d.ssmNo)       lines.push({ text: d.ssmNo.toUpperCase(), size: 14, weight: 600, extraGap: 8 });
+  (d.address || []).forEach(line => {
+    if (line) lines.push({ text: line.toUpperCase(), size: 13, weight: 500 });
+  });
+  if (d.phone) lines.push({ text: d.phone, size: 13, weight: 500, extraGap: 8 }); // <- spacing before tel
+  if (d.email) lines.push({ text: d.email.toLowerCase(), size: 13, weight: 500 });
+
+  var totalHeight = lines.length * 20 + lines.reduce((acc, l) => acc + (l.extraGap || 0), 0);
+  var startY = (260 - totalHeight) / 2 + 20;
+
+  var y = startY;
+  var svgLines = lines.map(l => {
+    var out = `<text x="${cx}" y="${y}" font-size="${l.size}" fill="${tc}" font-family="${ff}" font-weight="${l.weight}" text-anchor="middle">${l.text}</text>`;
+    y += 20 + (l.extraGap || 0);
+    return out;
+  }).join('');
+
+  return `
+    <svg width="320" height="260" viewBox="0 0 360 260" role="img" aria-label="Info stamp">
+      <rect x="8" y="8" width="344" height="244" stroke="${tc}" stroke-width="3" fill="none" rx="4" />
+      ${svgLines}
+    </svg>
+  `;
+}
+
+
+
+
+
+  function buildSVG(d) {
+    var tc = getTextColor(d.color || 'black');
+    var ff = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    if (d.template === 'box')  return boxStamp(d, tc, ff);
+    if (d.template === 'info') return infoStamp(d, tc, ff);
+    return roundStamp(d, tc, ff); // default round
+  }
+
+  function renderPreview() {
+    var d = readForm();
+    var ff = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    var originId = shortHash((d.companyName || '') + '|' + (d.ssmNo || ''));
+    var svg = buildSVG(d);
+    previewHost.innerHTML = [
+      '<div id="stamp-preview-wrapper" style="position:relative;display:inline-block;padding:16px;background:#F7F9FA;border-radius:8px;overflow:hidden;">',
+        svg,
+      '</div>'
+    ].join('');
+  }
+
+  // Bind text/select inputs
+// Bind text/select inputs with sync across same-name fields
+Array.prototype.forEach.call(form.querySelectorAll('input, select'), function (el) {
+  if (!el.name) return;
+  // Skip radio buttons — they are handled by updateProductUI
+  if (el.type === 'radio') return;
+
+  function updateValue() {
+    // Save into data
+    var val = el.value;
+    // Sync value to all other inputs with the same name
+    form.querySelectorAll('[name="' + el.name + '"]').forEach(function (other) {
+      if (other !== el) other.value = val;
+    });
+    renderPreview();
+  }
+
+  el.addEventListener('input', updateValue);
+  el.addEventListener('change', updateValue);
+});
+
+
+  // Bind color buttons
+  Array.prototype.forEach.call(form.querySelectorAll('button[data-color]'), function (btn) {
+    btn.addEventListener('click', function () {
+      form.querySelectorAll('button[data-color]').forEach(function (b) {
+        var active = (b === btn);
+        b.dataset.active = active ? '1' : '0';
+        b.style.border = active ? '2px solid var(--brand)' : '1px solid var(--border)';
+        b.style.background = active ? 'rgba(99,102,241,0.1)' : '#fff';
+      });
+      // push color into hidden input immediately
+      if (colorHidden) colorHidden.value = btn.getAttribute('data-color') || 'black';
+      renderPreview();
+    });
+  });
+
+  // Sync values across inputs with the same name (so switching templates keeps values)
+form.querySelectorAll('input').forEach(function (input) {
+  input.addEventListener('input', function () {
+    if (!this.name) return;
+    // Update all other inputs with the same name
+    form.querySelectorAll(`input[name="${this.name}"]`).forEach(function (other) {
+      if (other !== input) {
+        other.value = input.value;
+      }
+    });
+    renderPreview();
+  });
+});
+
+
+  // Prime color (if none marked active in HTML)
+  (function primeColor() {
+    var anyActive = form.querySelector('button[data-color][data-active="1"]');
+    if (!anyActive) {
+      var first = form.querySelector('button[data-color]');
+      if (first) {
+        first.dataset.active = '1';
+        first.style.border = '2px solid var(--brand)';
+        first.style.background = 'rgba(99,102,241,0.1)';
+        if (colorHidden) colorHidden.value = first.getAttribute('data-color') || 'black';
+      }
+    } else {
+      if (colorHidden) colorHidden.value = anyActive.getAttribute('data-color') || 'black';
+    }
+  })();
+
+  // Initial render
+  renderPreview();
+
+
+
+// ----------------------------
+// Free HD download (client-side, no payment, no watermark)
+// ----------------------------
+var downloadHdBtn = document.getElementById('btn-download-hd');
+if (downloadHdBtn) {
+  downloadHdBtn.addEventListener('click', async function () {
+    if (!window.domtoimage) return;
+
+    // Build a clean, high-resolution SVG straight from the form data
+    var d = readForm();
+    var svgMarkup = buildSVG(d);
+
+    var container = document.createElement('div');
+    container.style.background = '#fff';
+    container.style.padding = '24px';
+    container.style.position = 'fixed';
+    container.style.left = '-9999px';
+    container.style.top = '-9999px';
+    container.innerHTML = svgMarkup;
+
+    var svgEl = container.querySelector('svg');
+    if (svgEl) {
+      svgEl.setAttribute('width', 800);
+      svgEl.setAttribute('height', 800);
+    }
+    document.body.appendChild(container);
+
+    try {
+      var dataUrl = await window.domtoimage.toPng(container, { width: 848, height: 848 });
+      var a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = 'CopOnlineMY-HD-stamp.png';
+      a.click();
+    } catch (err) {
+      console.error('Download error:', err);
+      alert('Failed to generate image. Please try again.');
+    } finally {
+      document.body.removeChild(container);
+    }
+  });
+}
+
+
+});
+
+
+
+</script>
+</html>

@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>PDF Merge &amp; Compiler – CopOnline.my</title>
+  <meta name="description" content="Free in-browser PDF merger. Combine, reorder and compile multiple PDFs into one — nothing leaves your browser." />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="favicon.ico" />
+  <style>
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --bg: #f5f7fa;
+  --card-bg: #ffffff;
+  --radius: 12px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --text: #1f2d3d;
+  --muted: #6b7280;
+  --border: #e8eaee;
+  --brand: #6366f1;
+  --brand-gradient: linear-gradient(90deg, #6366f1 0%, #a78bfa 100%);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Inter", system-ui, sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+
+/* HEADER */
+.header { background:#fff; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:200; box-shadow:0 2px 14px rgba(31,45,61,0.04); }
+.header-inner { max-width:1160px; margin:0 auto; padding:0 1rem; display:flex; align-items:center; height:64px; gap:1rem; }
+.logo { display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text); font-weight:600; font-size:1.05rem; flex-shrink:0; }
+.tagline { font-size:0.6rem; color:var(--muted); }
+.nav { display:flex; gap:1rem; align-items:center; margin-left:auto; font-size:0.85rem; flex-wrap:wrap; }
+.nav a { text-decoration:none; color:#374151; font-weight:500; padding:6px 4px; transition:color .2s; }
+.nav a:hover, .nav a.active { color:var(--brand); font-weight:600; }
+.dropdown { position:relative; }
+.dropbtn { background:none; border:none; font:inherit; color:#374151; font-weight:500; cursor:pointer; padding:6px 4px; display:inline-flex; align-items:center; gap:3px; }
+.dropdown:hover .dropbtn, .dropbtn.active { color:var(--brand); font-weight:600; }
+.dropdown-menu { position:absolute; top:calc(100% + 4px); left:0; background:#fff; border:1px solid var(--border); border-radius:10px; box-shadow:0 8px 24px rgba(31,45,61,0.12); min-width:150px; padding:6px; display:none; flex-direction:column; z-index:300; }
+.dropdown:hover .dropdown-menu, .dropdown:focus-within .dropdown-menu { display:flex; }
+.dropdown-menu a { padding:8px 10px; border-radius:6px; font-size:0.85rem; margin:0; white-space:nowrap; }
+.dropdown-menu a:hover { background:#eef2ff; color:var(--brand); }
+
+/* LAYOUT */
+.page-title { text-align:center; font-size:1.5rem; font-weight:700; margin:24px 0 8px; }
+.page-subtitle { text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:20px; padding:0 1rem; }
+.wrap { max-width:760px; margin:auto; padding:0 1.25rem 2rem; }
+.card { background:var(--card-bg); padding:1.25rem; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:1.25rem; }
+.badge { display:inline-block; background:#eef2ff; color:var(--brand); font-size:0.7rem; font-weight:600; padding:3px 8px; border-radius:999px; }
+
+/* DROP ZONE */
+.dropzone { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:180px; border:2px dashed var(--border); border-radius:12px; color:var(--muted); font-size:0.9rem; cursor:pointer; transition:border-color .2s, background .2s; text-align:center; padding:1rem; }
+.dropzone:hover, .dropzone.drag { border-color:var(--brand); background:#eef2ff; }
+.dropzone svg { margin-bottom:12px; opacity:.5; }
+
+/* FILE LIST */
+.file-list { display:flex; flex-direction:column; gap:8px; margin-top:4px; }
+.file-row { display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--border); border-radius:10px; background:#fafafa; }
+.file-row .idx { width:22px; height:22px; flex-shrink:0; border-radius:50%; background:var(--brand-gradient); color:#fff; font-size:0.72rem; font-weight:700; display:flex; align-items:center; justify-content:center; }
+.file-row .thumb { width:38px; height:50px; object-fit:contain; border:1px solid var(--border); border-radius:4px; background:#fff; flex-shrink:0; }
+.file-row .meta { flex:1; min-width:0; }
+.file-row .name { font-size:0.85rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.file-row .sub { font-size:0.72rem; color:var(--muted); }
+.file-row .acts { display:flex; gap:4px; flex-shrink:0; }
+.icon-btn { width:30px; height:30px; border:1px solid var(--border); background:#fff; border-radius:8px; cursor:pointer; font-size:0.9rem; line-height:1; color:#374151; display:flex; align-items:center; justify-content:center; transition:all .15s; }
+.icon-btn:hover:not(:disabled) { border-color:var(--brand); color:var(--brand); background:#eef2ff; }
+.icon-btn:disabled { opacity:.35; cursor:not-allowed; }
+.icon-btn.danger:hover { border-color:#ef4444; color:#ef4444; background:#fef2f2; }
+
+/* BUTTONS */
+.btn { padding:0.7rem 1.1rem; border-radius:999px; cursor:pointer; border:none; font-size:0.85rem; font-weight:600; transition:all .2s; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+.btn-primary { background:var(--brand-gradient); color:#fff; }
+.btn-primary:hover:not(:disabled) { filter:brightness(1.06); transform:translateY(-1px); box-shadow:0 4px 12px rgba(99,102,241,0.3); }
+.btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+.btn-outline { background:#fff; border:1px solid var(--border); color:#374151; }
+.btn-outline:hover { background:#f9fafb; }
+.btn-block { width:100%; }
+.actions-bar { display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
+.actions-bar .btn { flex:1; min-width:150px; }
+.hint { font-size:0.72rem; color:var(--muted); margin-top:12px; line-height:1.5; }
+.status { font-size:0.8rem; color:var(--muted); text-align:center; margin-top:10px; min-height:18px; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<h1 class="page-title">PDF Merge &amp; Compiler <span class="badge">Free</span></h1>
+<p class="page-subtitle">Combine several PDFs into one file. Drag to add, reorder, remove — then compile and download. 100% in your browser, nothing is uploaded.</p>
+
+<div class="wrap">
+  <div class="card">
+    <div class="dropzone" id="dropzone">
+      <svg width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Click or drag PDF files here</span>
+      <span style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">Add as many as you like</span>
+      <input type="file" id="fileInput" accept="application/pdf" multiple style="display:none;" />
+    </div>
+
+    <div class="file-list" id="fileList" style="margin-top:14px;"></div>
+
+    <div class="actions-bar" id="actionsBar" style="display:none;">
+      <button class="btn btn-outline" id="addMoreBtn">+ Add more</button>
+      <button class="btn btn-primary" id="mergeBtn">Compile &amp; Download</button>
+    </div>
+    <div class="status" id="status"></div>
+
+    <div class="hint">Files are merged top-to-bottom in the order shown. Use the arrows to reorder. Password-protected PDFs may fail to load.</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script>
+(function () {
+  if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+  async function renderThumb(bytes) {
+    var doc = await pdfjsLib.getDocument({ data: bytes.slice(0) }).promise; // slice: pdf.js detaches the buffer
+    var page = await doc.getPage(1);
+    var vp = page.getViewport({ scale: 1 });
+    var v2 = page.getViewport({ scale: 44 / vp.width });
+    var canvas = document.createElement('canvas');
+    canvas.width = Math.ceil(v2.width); canvas.height = Math.ceil(v2.height);
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport: v2 }).promise;
+    try { doc.destroy(); } catch (e) {}
+    return canvas.toDataURL();
+  }
+
+  var fileInput  = document.getElementById('fileInput');
+  var dropzone   = document.getElementById('dropzone');
+  var fileList   = document.getElementById('fileList');
+  var actionsBar = document.getElementById('actionsBar');
+  var addMoreBtn = document.getElementById('addMoreBtn');
+  var mergeBtn   = document.getElementById('mergeBtn');
+  var statusEl   = document.getElementById('status');
+
+  var files = [];      // { id, name, bytes(Uint8Array), pages }
+  var nextId = 1;
+
+  function setStatus(msg) { statusEl.textContent = msg || ''; }
+
+  async function addFiles(fileObjs) {
+    setStatus('Reading files…');
+    for (var i = 0; i < fileObjs.length; i++) {
+      var f = fileObjs[i];
+      if (f.type !== 'application/pdf' && !/\.pdf$/i.test(f.name)) continue;
+      try {
+        var buf = new Uint8Array(await f.arrayBuffer());
+        var doc = await PDFLib.PDFDocument.load(buf, { ignoreEncryption: true });
+        var entry = { id: nextId++, name: f.name, bytes: buf, pages: doc.getPageCount(), thumb: null };
+        if (window.pdfjsLib) { try { entry.thumb = await renderThumb(buf); } catch (te) { console.warn('thumb failed', te); } }
+        files.push(entry);
+      } catch (err) {
+        console.error(err);
+        alert('Could not read "' + f.name + '" — it may be corrupted or password-protected.');
+      }
+    }
+    setStatus('');
+    render();
+  }
+
+  function render() {
+    fileList.innerHTML = '';
+    files.forEach(function (file, i) {
+      var row = document.createElement('div');
+      row.className = 'file-row';
+      row.innerHTML =
+        '<div class="idx">' + (i + 1) + '</div>' +
+        (file.thumb ? '<img class="thumb" src="' + file.thumb + '" alt="">' : '') +
+        '<div class="meta"><div class="name"></div><div class="sub">' + file.pages + ' page' + (file.pages === 1 ? '' : 's') + '</div></div>' +
+        '<div class="acts">' +
+          '<button class="icon-btn" data-act="up" title="Move up"' + (i === 0 ? ' disabled' : '') + '>↑</button>' +
+          '<button class="icon-btn" data-act="down" title="Move down"' + (i === files.length - 1 ? ' disabled' : '') + '>↓</button>' +
+          '<button class="icon-btn danger" data-act="remove" title="Remove">✕</button>' +
+        '</div>';
+      row.querySelector('.name').textContent = file.name; // safe text
+      row.querySelectorAll('button').forEach(function (b) {
+        b.addEventListener('click', function () { doAction(b.dataset.act, i); });
+      });
+      fileList.appendChild(row);
+    });
+    var has = files.length > 0;
+    actionsBar.style.display = has ? 'flex' : 'none';
+    mergeBtn.disabled = files.length < 1;
+    mergeBtn.textContent = files.length < 2 ? 'Download' : 'Compile & Download';
+    dropzone.style.minHeight = has ? '120px' : '180px';
+  }
+
+  function doAction(act, i) {
+    if (act === 'remove') files.splice(i, 1);
+    else if (act === 'up' && i > 0) swap(i, i - 1);
+    else if (act === 'down' && i < files.length - 1) swap(i, i + 1);
+    render();
+  }
+  function swap(a, b) { var t = files[a]; files[a] = files[b]; files[b] = t; }
+
+  async function merge() {
+    if (!files.length) return;
+    mergeBtn.disabled = true;
+    setStatus('Compiling…');
+    try {
+      var out = await PDFLib.PDFDocument.create();
+      for (var i = 0; i < files.length; i++) {
+        var src = await PDFLib.PDFDocument.load(files[i].bytes, { ignoreEncryption: true });
+        var copied = await out.copyPages(src, src.getPageIndices());
+        copied.forEach(function (p) { out.addPage(p); });
+      }
+      var bytes = await out.save();
+      var blob = new Blob([bytes], { type: 'application/pdf' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'merged.pdf';
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      setStatus('Done — ' + out.getPageCount() + ' pages compiled.');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to compile the PDF. Please try again.');
+      setStatus('');
+    } finally {
+      mergeBtn.disabled = false;
+    }
+  }
+
+  // Wiring
+  fileInput.addEventListener('change', function (e) {
+    if (e.target.files.length) addFiles(e.target.files);
+    fileInput.value = '';
+  });
+  dropzone.addEventListener('click', function () { fileInput.click(); });
+  addMoreBtn.addEventListener('click', function () { fileInput.click(); });
+  mergeBtn.addEventListener('click', merge);
+
+  ['dragenter', 'dragover'].forEach(function (ev) {
+    dropzone.addEventListener(ev, function (e) { e.preventDefault(); dropzone.classList.add('drag'); });
+  });
+  ['dragleave', 'drop'].forEach(function (ev) {
+    dropzone.addEventListener(ev, function (e) { e.preventDefault(); dropzone.classList.remove('drag'); });
+  });
+  dropzone.addEventListener('drop', function (e) {
+    if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+  });
+})();
+</script>
+  <script src="nav.js" defer></script>
+</body>
+</html>

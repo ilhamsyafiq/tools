@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Image to PDF – CopOnline.my</title>
+  <meta name="description" content="Combine images into a single PDF in your browser. Reorder and download — nothing is uploaded." />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="favicon.ico" />
+  <style>
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+:root { --bg:#f5f7fa; --card-bg:#fff; --radius:12px; --shadow:0 2px 8px rgba(0,0,0,0.06); --text:#1f2d3d; --muted:#6b7280; --border:#e8eaee; --brand:#6366f1; --brand-gradient:linear-gradient(90deg,#6366f1 0%,#a78bfa 100%); }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:"Inter",system-ui,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+.header { background:#fff; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:200; box-shadow:0 2px 14px rgba(31,45,61,0.04); }
+.header-inner { max-width:1160px; margin:0 auto; padding:0 1rem; display:flex; align-items:center; height:64px; gap:1rem; }
+.logo { display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text); font-weight:600; font-size:1.05rem; flex-shrink:0; }
+.tagline { font-size:0.6rem; color:var(--muted); }
+.nav { display:flex; gap:1rem; align-items:center; margin-left:auto; font-size:0.85rem; flex-wrap:wrap; }
+.nav a { text-decoration:none; color:#374151; font-weight:500; padding:6px 4px; transition:color .2s; }
+.nav a:hover, .nav a.active { color:var(--brand); font-weight:600; }
+.dropdown { position:relative; }
+.dropbtn { background:none; border:none; font:inherit; color:#374151; font-weight:500; cursor:pointer; padding:6px 4px; display:inline-flex; align-items:center; gap:3px; }
+.dropdown:hover .dropbtn, .dropbtn.active { color:var(--brand); font-weight:600; }
+.dropdown-menu { position:absolute; top:calc(100% + 4px); left:0; background:#fff; border:1px solid var(--border); border-radius:10px; box-shadow:0 8px 24px rgba(31,45,61,0.12); min-width:150px; padding:6px; display:none; flex-direction:column; z-index:300; }
+.dropdown:hover .dropdown-menu, .dropdown:focus-within .dropdown-menu { display:flex; }
+.dropdown-menu a { padding:8px 10px; border-radius:6px; font-size:0.85rem; margin:0; white-space:nowrap; }
+.dropdown-menu a:hover { background:#eef2ff; color:var(--brand); }
+.page-title { text-align:center; font-size:1.5rem; font-weight:700; margin:24px 0 8px; }
+.page-subtitle { text-align:center; font-size:0.85rem; color:var(--muted); margin-bottom:20px; padding:0 1rem; }
+.wrap { max-width:760px; margin:auto; padding:0 1.25rem 2rem; }
+.card { background:var(--card-bg); padding:1.25rem; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:1.25rem; }
+.badge { display:inline-block; background:#eef2ff; color:var(--brand); font-size:0.7rem; font-weight:600; padding:3px 8px; border-radius:999px; }
+.dropzone { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:200px; border:2px dashed var(--border); border-radius:12px; color:var(--muted); font-size:0.9rem; cursor:pointer; transition:border-color .2s,background .2s; text-align:center; padding:1rem; }
+.dropzone:hover, .dropzone.drag { border-color:var(--brand); background:#eef2ff; }
+.dropzone svg { margin-bottom:12px; opacity:.5; }
+.opt-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+.opt-row label { font-size:0.78rem; color:var(--muted); font-weight:600; }
+.seg { display:flex; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+.seg button { border:none; background:#fff; padding:7px 14px; font-size:0.82rem; cursor:pointer; color:#374151; }
+.seg button.on { background:var(--brand); color:#fff; }
+select, input[type=range] { accent-color:var(--brand); }
+select { padding:7px 10px; border:1px solid var(--border); border-radius:8px; font-size:0.82rem; }
+.thumb-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:10px; max-height:340px; overflow-y:auto; padding:8px; border:1px solid var(--border); border-radius:10px; margin:14px 0; background:#fafafa; }
+.thumb-cell { position:relative; background:#fff; border:1px solid var(--border); border-radius:6px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+.thumb-cell img { width:100%; display:block; }
+.thumb-cell .pg { position:absolute; bottom:0; left:0; right:0; text-align:center; font-size:10px; background:rgba(0,0,0,0.55); color:#fff; padding:1px 0; }
+.thumb-cell .dl { position:absolute; top:3px; right:3px; background:var(--brand); color:#fff; border:none; border-radius:6px; font-size:10px; padding:2px 6px; cursor:pointer; opacity:.9; }
+.btn { padding:0.75rem 1.1rem; border-radius:999px; cursor:pointer; border:none; font-size:0.85rem; font-weight:600; transition:all .2s; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+.btn-primary { background:var(--brand-gradient); color:#fff; }
+.btn-primary:hover:not(:disabled) { filter:brightness(1.06); transform:translateY(-1px); box-shadow:0 4px 12px rgba(99,102,241,0.3); }
+.btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+.btn-outline { background:#fff; border:1px solid var(--border); color:#374151; }
+.btn-outline:hover { background:#f9fafb; }
+.actions-bar { display:flex; gap:10px; margin-top:8px; flex-wrap:wrap; }
+.actions-bar .btn { flex:1; min-width:150px; }
+.status { font-size:0.8rem; color:var(--muted); text-align:center; margin-top:10px; min-height:18px; }
+.hint { font-size:0.72rem; color:var(--muted); margin-top:12px; line-height:1.5; }
+@media (max-width:768px){ .header-inner { height:auto; flex-wrap:wrap; padding:10px 1rem; } }
+/* Image → PDF specific */
+.file-list { list-style:none; margin:14px 0; padding:0; border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+.file-list:empty { display:none; }
+.row { display:flex; align-items:center; gap:12px; padding:8px 10px; background:#fff; border-bottom:1px solid var(--border); }
+.row:last-child { border-bottom:none; }
+.row .thumb { width:46px; height:46px; flex-shrink:0; border:1px solid var(--border); border-radius:6px; object-fit:cover; background:#fafafa; }
+.row .fname { flex:1; min-width:0; font-size:0.82rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.row .idx { font-size:0.7rem; color:var(--muted); flex-shrink:0; }
+.row-actions { display:flex; gap:6px; flex-shrink:0; }
+.icon-btn { width:30px; height:30px; border:1px solid var(--border); background:#fff; border-radius:8px; cursor:pointer; color:#374151; font-size:0.9rem; display:inline-flex; align-items:center; justify-content:center; transition:all .15s; }
+.icon-btn:hover:not(:disabled) { background:#eef2ff; border-color:var(--brand); color:var(--brand); }
+.icon-btn:disabled { opacity:.4; cursor:not-allowed; }
+.icon-btn.danger:hover { background:#fef2f2; border-color:#ef4444; color:#ef4444; }
+  </style>
+</head>
+<body>
+<h1 class="page-title">Image to PDF <span class="badge">Free</span></h1>
+<p class="page-subtitle">Combine images into a single PDF. Reorder them, then download. 100% in your browser, nothing is uploaded.</p>
+
+<div class="wrap">
+  <div class="card">
+    <div class="dropzone" id="dropzone">
+      <svg width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <span>Click or drag images here</span>
+      <span style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">Add multiple images (PNG, JPG, WebP, GIF…)</span>
+      <input type="file" id="fileInput" accept="image/*" multiple style="display:none;" />
+    </div>
+
+    <ul class="file-list" id="fileList"></ul>
+
+    <div id="controls" style="display:none;">
+      <div class="opt-row">
+        <label>Page size</label>
+        <select id="sizeSel">
+          <option value="fit" selected>Fit to image</option>
+          <option value="a4p">A4 Portrait</option>
+          <option value="a4l">A4 Landscape</option>
+        </select>
+        <label style="margin-left:8px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
+          <input type="checkbox" id="marginChk" /> Add margin
+        </label>
+      </div>
+
+      <div class="actions-bar">
+        <button class="btn btn-outline" id="addBtn">Add more</button>
+        <button class="btn btn-primary" id="makeBtn">Create PDF</button>
+      </div>
+      <div class="status" id="status"></div>
+    </div>
+    <div class="hint">Images are combined into one PDF in the order shown above. Use ↑ / ↓ to reorder or ✕ to remove. "Fit to image" makes each page match its image; A4 scales and centers each image on a standard page. Nothing is uploaded — everything runs locally in your browser.</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+<script>
+(function () {
+  var fileInput = document.getElementById('fileInput');
+  var dropzone  = document.getElementById('dropzone');
+  var fileList  = document.getElementById('fileList');
+  var controls  = document.getElementById('controls');
+  var sizeSel   = document.getElementById('sizeSel');
+  var marginChk = document.getElementById('marginChk');
+  var addBtn    = document.getElementById('addBtn');
+  var makeBtn   = document.getElementById('makeBtn');
+  var statusEl  = document.getElementById('status');
+
+  var items = []; // { file, url }
+
+  function setStatus(m){ statusEl.textContent = m || ''; }
+
+  function addFiles(fileArr){
+    var imgs = Array.prototype.filter.call(fileArr, function(f){ return f && f.type && /^image\//.test(f.type); });
+    if (!imgs.length) { if (fileArr && fileArr.length) alert('Please choose image files.'); return; }
+    imgs.forEach(function(f){ items.push({ file: f, url: URL.createObjectURL(f) }); });
+    render();
+  }
+
+  function move(i, dir){
+    var j = i + dir;
+    if (j < 0 || j >= items.length) return;
+    var tmp = items[i]; items[i] = items[j]; items[j] = tmp;
+    render();
+  }
+
+  function remove(i){
+    try { URL.revokeObjectURL(items[i].url); } catch(e){}
+    items.splice(i, 1);
+    render();
+  }
+
+  function render(){
+    fileList.innerHTML = '';
+    items.forEach(function(item, i){
+      var li = document.createElement('li');
+      li.className = 'row';
+
+      var img = document.createElement('img');
+      img.className = 'thumb'; img.src = item.url; img.alt = '';
+
+      var idx = document.createElement('span');
+      idx.className = 'idx'; idx.textContent = (i + 1) + '.';
+
+      var name = document.createElement('span');
+      name.className = 'fname'; name.textContent = item.file.name; name.title = item.file.name;
+
+      var actions = document.createElement('div');
+      actions.className = 'row-actions';
+
+      var up = document.createElement('button');
+      up.className = 'icon-btn'; up.textContent = '↑'; up.title = 'Move up'; up.disabled = (i === 0);
+      up.addEventListener('click', function(){ move(i, -1); });
+
+      var down = document.createElement('button');
+      down.className = 'icon-btn'; down.textContent = '↓'; down.title = 'Move down'; down.disabled = (i === items.length - 1);
+      down.addEventListener('click', function(){ move(i, 1); });
+
+      var del = document.createElement('button');
+      del.className = 'icon-btn danger'; del.textContent = '✕'; del.title = 'Remove';
+      del.addEventListener('click', function(){ remove(i); });
+
+      actions.appendChild(up); actions.appendChild(down); actions.appendChild(del);
+      li.appendChild(idx); li.appendChild(img); li.appendChild(name); li.appendChild(actions);
+      fileList.appendChild(li);
+    });
+
+    if (items.length) { controls.style.display = 'block'; }
+    else { controls.style.display = 'none'; setStatus(''); }
+  }
+
+  function dataURLToUint8(dataUrl){
+    var base64 = dataUrl.split(',')[1];
+    var bin = atob(base64);
+    var arr = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return arr;
+  }
+
+  // Draw a File into a canvas and return jpeg bytes + dims
+  function fileToJpegBytes(file){
+    return new Promise(function(resolve, reject){
+      var url = URL.createObjectURL(file);
+      var image = new Image();
+      image.onload = function(){
+        try {
+          var canvas = document.createElement('canvas');
+          canvas.width = image.naturalWidth || image.width;
+          canvas.height = image.naturalHeight || image.height;
+          var ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(image, 0, 0);
+          var dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+          URL.revokeObjectURL(url);
+          resolve(dataURLToUint8(dataUrl));
+        } catch (e) { URL.revokeObjectURL(url); reject(e); }
+      };
+      image.onerror = function(){ URL.revokeObjectURL(url); reject(new Error('Could not decode image: ' + file.name)); };
+      image.src = url;
+    });
+  }
+
+  async function embedImage(pdfDoc, file){
+    var bytes = new Uint8Array(await file.arrayBuffer());
+    var type = (file.type || '').toLowerCase();
+    if (type === 'image/png') {
+      return await pdfDoc.embedPng(bytes);
+    }
+    if (type === 'image/jpeg' || type === 'image/jpg') {
+      return await pdfDoc.embedJpg(bytes);
+    }
+    // Any other type (webp, gif, bmp…) -> rasterize to jpeg
+    var jpegBytes = await fileToJpegBytes(file);
+    return await pdfDoc.embedJpg(jpegBytes);
+  }
+
+  async function makePDF(){
+    if (!items.length) return;
+    if (!window.PDFLib) { alert('PDF library failed to load. Check your connection.'); return; }
+    makeBtn.disabled = true; addBtn.disabled = true;
+    try {
+      var PDFDocument = window.PDFLib.PDFDocument;
+      var pdfDoc = await PDFDocument.create();
+      var mode = sizeSel.value;
+      var margin = marginChk.checked ? 36 : 0;
+
+      for (var i = 0; i < items.length; i++) {
+        setStatus('Adding image ' + (i + 1) + ' / ' + items.length + '…');
+        var img = await embedImage(pdfDoc, items[i].file);
+        var iw = img.width, ih = img.height;
+
+        if (mode === 'fit') {
+          var page = pdfDoc.addPage([iw, ih]);
+          page.drawImage(img, { x: 0, y: 0, width: iw, height: ih });
+        } else {
+          var pw, ph;
+          if (mode === 'a4l') { pw = 842; ph = 595; }
+          else { pw = 595; ph = 842; } // a4p
+          var page2 = pdfDoc.addPage([pw, ph]);
+          var availW = pw - margin * 2;
+          var availH = ph - margin * 2;
+          var scale = Math.min(availW / iw, availH / ih);
+          if (scale > 0 && isFinite(scale)) {
+            var dw = iw * scale, dh = ih * scale;
+            var x = (pw - dw) / 2, y = (ph - dh) / 2;
+            page2.drawImage(img, { x: x, y: y, width: dw, height: dh });
+          }
+        }
+      }
+
+      setStatus('Saving PDF…');
+      var pdfBytes = await pdfDoc.save();
+      var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'images.pdf';
+      a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+      setStatus('Done — ' + items.length + ' image' + (items.length > 1 ? 's' : '') + ' in images.pdf.');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to create the PDF: ' + (err && err.message ? err.message : err));
+      setStatus('');
+    } finally {
+      makeBtn.disabled = false; addBtn.disabled = false;
+    }
+  }
+
+  // Wire up
+  fileInput.addEventListener('change', function(e){ addFiles(e.target.files); fileInput.value = ''; });
+  dropzone.addEventListener('click', function(){ fileInput.click(); });
+  addBtn.addEventListener('click', function(){ fileInput.click(); });
+  makeBtn.addEventListener('click', makePDF);
+
+  ['dragenter','dragover'].forEach(function(ev){ dropzone.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.add('drag'); }); });
+  ['dragleave','drop'].forEach(function(ev){ dropzone.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.remove('drag'); }); });
+  dropzone.addEventListener('drop', function(e){ if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files); });
+})();
+</script>
+  <script src="nav.js" defer></script>
+</body>
+</html>
