@@ -1,5 +1,5 @@
 /*
- * Shared site chrome for CopOnline tools.
+ * Shared site chrome for fique tools.
  * Injects one consistent nav bar + minimal footer into every page,
  * so all pages share a single source of truth. Include with:
  *   <script src="nav.js" defer></script>
@@ -45,8 +45,8 @@
 
   var header = ''
     + '<header class="site-header"><div class="site-header-inner">'
-    + '<a class="site-logo" href="index.html"><img src="amm.png" alt="CopOnline logo" />'
-    + '<span><b>CopOnline.my</b><small>Free online tools</small></span></a>'
+    + '<a class="site-logo" href="index.html"><img src="amm.png" alt="fique logo" />'
+    + '<span><b>fique.my</b><small>Free online tools</small></span></a>'
     + '<nav class="site-nav">'
     + top('index.html', 'Home')
     + top('chop.html', 'Create Chop')
