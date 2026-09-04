@@ -46,7 +46,7 @@
   var header = ''
     + '<header class="site-header"><div class="site-header-inner">'
     + '<a class="site-logo" href="index.html"><img src="amm.png" alt="CopOnline logo" />'
-    + '<span><b>CopOnline.my</b><small>Free online tools</small></span></a>'
+    + '<span><b>fique.my</b><small>Free online tools</small></span></a>'
     + '<nav class="site-nav">'
     + top('index.html', 'Home')
     + top('chop.html', 'Create Chop')
